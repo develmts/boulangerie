@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: client-app
+    env: docker
+    docker:
+      image: ghcr.io/develmts/client-app:prod
+    region: frankfurt    # o eu-central, depèn del que Render admeti / et convingui
+    plan: starter        # o free / standard / etc, segons el que trieu
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+    healthCheckPath: /health   # canvia-ho o elimina-ho segons la teva app
+    autoDeploy: true

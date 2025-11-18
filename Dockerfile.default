@@ -1,0 +1,24 @@
+# Imatge base lleugera
+FROM node:22-alpine
+
+# Directori de treball dins el contenidor
+WORKDIR /usr/src/app
+
+# Copiem només manifests per aprofitar la cache
+COPY package*.json ./
+
+# Instal·lem dependències de producció
+RUN npm ci --omit=dev
+
+# Copiem la resta del codi
+COPY . .
+
+# Variables d'entorn per defecte
+ENV NODE_ENV=production \
+    PORT=3000
+
+# Port intern de l'app (informatiu)
+EXPOSE 3000
+
+# Comanda per arrencar l'app
+CMD ["npm", "start"]

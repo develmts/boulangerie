@@ -1,0 +1,57 @@
+name: Build & Push Docker image (release)
+
+on:
+  # 1) Només quan es crea un tag que comença per "deploy-"
+  push:
+    tags:
+      - 'deploy-*'
+
+  # 2) O quan el llences a mà des de GitHub (Run workflow)
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image name and tag
+        id: vars
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY_OWNER}/client-app"
+
+          # Si ve d'un tag (ex: deploy-2025-11-18), fem servir el nom del tag com a tag de Docker
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            TAG="${GITHUB_REF_NAME}"
+          else
+            # Si ve de workflow_dispatch, fem un tag pseudo-únic
+            TAG="manual-${GITHUB_RUN_NUMBER}"
+          fi
+
+          echo "IMAGE=${IMAGE}" >> $GITHUB_OUTPUT
+          echo "TAG=${TAG}" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${{ steps.vars.outputs.IMAGE }}:${{ steps.vars.outputs.TAG }} \
+            -t ${{ steps.vars.outputs.IMAGE }}:prod \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ steps.vars.outputs.IMAGE }}:${{ steps.vars.outputs.TAG }}
+          docker push ${{ steps.vars.outputs.IMAGE }}:prod

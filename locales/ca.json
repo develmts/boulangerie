@@ -1,0 +1,26 @@
+{
+  "header": {
+    "title": "Piella Pastisseria/Fleca Artesana"
+  },
+  "footer": {
+    "copyright": "Tots els drets reservats."
+  },
+  "nav": {
+    "home": "Inici",
+    "shop": "Tenda",
+    "contact": "Contacte"
+  },
+  "product": {
+    "heading": "Els nostres Destacats del Día",
+    "add_to_cart": "Afegir a la cistella",
+    "adding": "Afegint...",
+    "unavailable": "No Disponible"
+  },
+  "cta": {
+    "view_products": "Veure els noteres Productes"
+  },
+  "sections": {
+    "phase_2_title": "Gestio de la Presencia Online (Fase II)",
+    "loading": "Carregant gando Maqueta Headless. Esperi, si us plau..."
+  }
+}

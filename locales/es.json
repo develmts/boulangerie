@@ -1,0 +1,26 @@
+{
+  "header": {
+    "title": "Maqueta Panadería Artesana"
+  },
+  "footer": {
+    "copyright": "Todos los derechos reservados."
+  },
+  "nav": {
+    "home": "Inicio",
+    "shop": "Tienda",
+    "contact": "Contacto"
+  },
+  "product": {
+    "heading": "Nuestros Destacados del Día",
+    "add_to_cart": "Añadir al Carrito",
+    "adding": "Añadiendo...",
+    "unavailable": "No Disponible"
+  },
+  "cta": {
+    "view_products": "Ver Nuestros Productos"
+  },
+  "sections": {
+    "phase_2_title": "Gestión de la Presencia Online (Fase II)",
+    "loading": "Cargando Maqueta Headless. Por favor, espere..."
+  }
+}
