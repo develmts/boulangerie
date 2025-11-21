@@ -1,0 +1,102 @@
+<!-- src/pages/legal.vue -->
+<script setup lang="ts">
+import { type Locale } from '~/services/shopify'
+import { getContentBySlug, type ContentBlock } from '~/services/contentful'
+
+definePageMeta({
+  layout: 'default',
+})
+
+const { t, locale } = useI18n()
+
+const loading = ref(true)
+const content = ref<ContentBlock | null>(null)
+
+const slug = 'legal-terms'
+
+async function loadData(currentLocale: Locale) {
+  loading.value = true
+  try {
+    const block = await getContentBySlug(slug, currentLocale)
+    content.value = block
+  } catch (err) {
+    console.error('Error carregant Avís legal / Termes:', err)
+    content.value = null
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  loadData(locale.value as Locale)
+})
+
+watch(locale, newLocale => {
+  loadData(newLocale as Locale)
+})
+</script>
+
+<template>
+  <div class="maqueta-container legal-page">
+    <div v-if="loading" class="loading-message">
+      {{ t('sections.loading') }}
+    </div>
+
+    <div v-else>
+      <section v-if="content" class="legal-section">
+        <h1 class="legal-title">
+          {{ content.title }}
+        </h1>
+
+        <article class="legal-body" v-html="content.body" />
+      </section>
+
+      <section v-else class="legal-section">
+        <h1 class="legal-title">
+          {{ t('legal.terms_fallback_title', 'Avís legal i termes d’ús') }}
+        </h1>
+        <p class="legal-body">
+          {{ t('legal.terms_fallback_body', 'El contingut legal no està disponible en aquests moments.') }}
+        </p>
+      </section>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.legal-page {
+  padding: 40px 0;
+}
+
+.legal-section {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 24px 20px;
+}
+
+.legal-title {
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+  color: var(--color-primary);
+}
+
+.legal-body :deep(p) {
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.legal-body :deep(h2),
+.legal-body :deep(h3) {
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+.legal-body :deep(ul),
+.legal-body :deep(ol) {
+  margin-left: 1.2rem;
+  margin-bottom: 12px;
+}
+</style>

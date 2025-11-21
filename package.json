@@ -1,18 +1,24 @@
 {
   "name": "boulangerie",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "serve -s dist -l 4090",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "@intlify/vue-i18n-bridge": "^1.1.0",
     "@nuxtjs/i18n": "8.0.0",
     "nuxt": "3.7.4",
+    "serve": "^14.2.5",
     "vue": "^3.3.12",
     "vue-router": "^4.2.5"
   },
@@ -20,7 +26,6 @@
     "@nuxt/devtools": "^3.1.0",
     "@nuxt/typescript-build": "^3.0.0",
     "@types/node": "^20.10.3",
-    "@types/vue": "^1.0.31",
     "typescript": "^5.3.2"
   }
 }

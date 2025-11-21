@@ -1,0 +1,38 @@
+/* assets/css/theme.pa-i-dolcos.css */
+/* Paleta 3 – Pa i Dolços */
+
+:root[data-theme="pa-i-dolcos"] {
+  --color-primary: #B6520F;
+  --color-primary-dark: #48351B;
+  --color-background: #F2F0EB;
+  --color-surface: #FFFAF1; /* SUPERSUAVITAT PA/DOLÇ */
+  --color-text-main: #1A1A1A;
+  --color-text-muted: #6b6259;
+  --color-border: #e1d9c8;
+
+  /* Tokens */
+  --color-bg: #F2F0EB;
+  --color-bg-secondary: #FDFBD4;
+  --color-surface: #FFFAF1;
+
+  --color-text-strong: #181310;
+  --color-text: #2A211A;
+  --color-text-muted: #6b6259;
+  --color-text-brand: #B6520F;
+
+  --color-accent: #B6520F;
+  --color-accent-soft: #f0c4a1;
+
+  --color-button: #1F1912;
+  --color-button-hover: #48351B;
+
+  --font-heading: "Montserrat", sans-serif;
+  --font-body: "Roboto Condensed", sans-serif;
+
+  --radius-s: 4px;
+  --radius-m: 10px;
+  --radius-l: 20px;
+
+  --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+  --shadow-strong: 0 10px 30px rgba(0,0,0,0.16);
+}

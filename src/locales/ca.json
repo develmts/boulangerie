@@ -1,0 +1,90 @@
+{
+  "header": {
+    "title": "Pastisseria Piella"
+  },
+  "footer": {
+    "copyright": "Tots els drets reservats."
+  },
+  "nav": {
+    "home": "Inici",
+    "shop": "Tenda",
+    "contact": "Contacte",
+    "about": "Som i serem",
+    "privacy": "Privacitat",
+    "legal": "Avís legal",
+    "cookies": "Cookies",
+    "faq": "PMF",
+    "blog": "Blog"
+  },
+  "product": {
+    "heading": "Els nostres Destacats del Día",
+    "add_to_cart": "Afegir a la cistella",
+    "adding": "Afegint...",
+    "unavailable": "No Disponible"
+  },
+  "cta": {
+    "view_products": "Veure els noteres Productes"
+  },
+  "sections": {
+    "phase_2_title": "Gestio de la Presencia Online (Fase II)",
+    "loading": "Carregant Maqueta Headless. Esperi, si us plau..."
+  },
+  "home": {
+    "hero": {
+      "title": "Pastisseria Piella",
+      "subtitle": "Artesania dolça feta cada dia al nostre obrador. Croissants, coques i pastissos elaborats amb receptes pròpies i ingredients de qualitat.",
+      "primaryCta": "Veure productes",
+      "secondaryCta": "Contactar",
+      "imageAlt": "Productes artesans de la Pastisseria Piella"
+    }
+  },
+  "contact": {
+    "metaTitle": "Contacte",
+    "metaDescription": "Posa’t en contacte amb Pastisseria Piella. Estem aquí per ajudar-te amb comandes, dubtes i informació.",
+    
+    "title": "Contactan's",
+    "subtitle": "Parlem? Estem aquí per ajudar-te amb les teves comandes i dubtes.",
+
+    "infoTitle": "Dades de contacte",
+    "addressLabel": "Adreça",
+    "phoneLabel": "Telèfon",
+    "emailLabel": "Correu electrònic",
+    "hoursLabel": "Horari",
+
+    "socialTitle": "Xarxes socials",
+    
+    "formTitle": "Envia’ns un missatge",
+    "formName": "Nom",
+    "formEmail": "Correu electrònic",
+    "formMessage": "Missatge",
+    "formSubmit": "Enviar",
+    "formFeedback": "Missatge enviat correctament."
+  },
+  
+  "faq": {
+    "metaTitle": "Preguntes freqüents",
+    "metaDescription": "Resolem els dubtes més habituals sobre comandes, recollides, enviaments i al·lèrgens de la Pastisseria Piella.",
+    "title": "Preguntes freqüents",
+    "subtitle": "Aquí trobaràs resposta als dubtes més habituals sobre comandes online, recollides, enviaments i informació d’al·lèrgens.",
+    "ordersTimeQuestion": "Amb quanta antelació he de fer la comanda?",
+    "ordersTimeAnswer": "Per als productes del dia (croissants, coques, pastes variades) recomanem fer la comanda amb almenys 24 hores d’antelació. Per a pastissos personalitzats o encàrrecs especials, el temps mínim és de 48–72 hores, segons volum i disseny.",
+    "customCakesQuestion": "Feu pastissos personalitzats per aniversaris o esdeveniments?",
+    "customCakesAnswer": "Sí. Podem personalitzar mida, missatge, alguns sabors i decoracions bàsiques. Si tens una idea concreta, indica-ho al formulari de comanda o truca’ns per comentar els detalls. Et confirmarem la disponibilitat i el pressupost abans de preparar-lo.",
+    "deliveryAreaQuestion": "Feu enviaments a domicili? A quines zones arribeu?",
+    "deliveryAreaAnswer": "Oferim servei de lliurament a domicili dins de la nostra zona de repartiment local. En el procés de compra podràs introduir el teu codi postal i veure si l’enviament està disponible, així com el cost de lliurament i els horaris possibles.",
+    "allergensQuestion": "Com puc saber els al·lèrgens dels vostres productes?",
+    "allergensAnswer": "A la descripció de cada producte detallem els principals al·lèrgens (gluten, lactosa, fruita seca, ou, etc.). Si tens alguna intolerància o necessitat especial, et recomanem indicar-ho al fer la comanda o contactar amb nosaltres abans de confirmar-la. Farem el possible per adaptar-nos-hi.",
+    "pickupTimeQuestion": "En quin horari puc venir a recollir la meva comanda?",
+    "pickupTimeAnswer": "Les comandes es poden recollir a la botiga dins l’horari d’obertura indicat a la pàgina de contacte. Quan confirmem la teva comanda t’indicarem també el dia i franja recomanada per a la recollida, especialment en el cas de pastissos i encàrrecs voluminosos.",
+    "changesQuestion": "Puc modificar o cancel·lar una comanda un cop feta?",
+    "changesAnswer": "Si necessites modificar o cancel·lar una comanda, contacta amb nosaltres tan aviat com sigui possible. Per a productes del dia, intentarem adaptar-nos-hi si encara no han estat elaborats. En el cas de pastissos personalitzats o encàrrecs especials, pot ser que no sigui possible fer canvis si la producció ja està en marxa."
+  },
+  "blog": {
+    "metaDescription": "Històries, curiositats i secrets del nostre obrador." 
+  },
+  "about": {
+    "metaDescription": "Tradició, temps i ofici: la història i la manera de treballar de la pastisseria."
+  }
+
+
+}

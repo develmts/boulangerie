@@ -1,0 +1,77 @@
+{
+  "header": {
+    "title": "Maqueta Panadería Artesana"
+  },
+  "footer": {
+    "copyright": "Todos los derechos reservados."
+  },
+  "nav": {
+    "home": "Inicio",
+    "shop": "Tienda",
+    "contact": "Contacto",
+    "about": "Somos así",
+    "privacy": "Privacidad",
+    "legal": "Aviso legal",
+    "cookies": "Cookies"    
+  },
+  "product": {
+    "heading": "Nuestros Destacados del Día",
+    "add_to_cart": "Añadir al Carrito",
+    "adding": "Añadiendo...",
+    "unavailable": "No Disponible"
+  },
+  "cta": {
+    "view_products": "Ver Nuestros Productos"
+  },
+  "sections": {
+    "phase_2_title": "Gestión de la Presencia Online (Fase II)",
+    "loading": "Cargando Maqueta Headless. Por favor, espere..."
+  },
+  "contact": {
+    "metaTitle": "Contacto",
+    "metaDescription": "Ponte en contacto con Pastisseria Piella. Estamos aquí para ayudarte con pedidos, dudas e información.",
+
+    "title": "Contacto",
+    "subtitle": "¿Hablamos? Estamos aquí para ayudarte con tus pedidos y dudas.",
+
+    "infoTitle": "Datos de contacto",
+    "addressLabel": "Dirección",
+    "phoneLabel": "Teléfono",
+    "emailLabel": "Correo electrónico",
+    "hoursLabel": "Horario",
+
+    "socialTitle": "Redes sociales",
+
+    "formTitle": "Envíanos un mensaje",
+    "formName": "Nombre",
+    "formEmail": "Correo electrónico",
+    "formMessage": "Mensaje",
+    "formSubmit": "Enviar",
+    "formFeedback": "Mensaje enviado correctamente."
+  },
+  "faq": {
+    "metaTitle": "Preguntas frecuentes",
+    "metaDescription": "Resolvemos las dudas más habituales sobre pedidos, recogidas, envíos y alérgenos de Pastisseria Piella.",
+    "title": "Preguntas frecuentes",
+    "subtitle": "Aquí encontrarás respuesta a las dudas más habituales sobre pedidos online, recogidas, envíos e información de alérgenos.",
+    "ordersTimeQuestion": "¿Con cuánta antelación tengo que hacer el pedido?",
+    "ordersTimeAnswer": "Para los productos del día (croissants, cocas, pastas variadas) recomendamos hacer el pedido con al menos 24 horas de antelación. Para tartas personalizadas o encargos especiales, el tiempo mínimo es de 48–72 horas, según volumen y diseño.",
+    "customCakesQuestion": "¿Hacéis tartas personalizadas para cumpleaños o eventos?",
+    "customCakesAnswer": "Sí. Podemos personalizar tamaño, mensaje, algunos sabores y decoraciones básicas. Si tienes una idea concreta, indícalo en el formulario de pedido o llámanos para comentar los detalles. Te confirmaremos la disponibilidad y el presupuesto antes de prepararla.",
+    "deliveryAreaQuestion": "¿Hacéis envíos a domicilio? ¿A qué zonas llegáis?",
+    "deliveryAreaAnswer": "Ofrecemos servicio de entrega a domicilio dentro de nuestra zona de reparto local. En el proceso de compra podrás introducir tu código postal y ver si el envío está disponible, así como el coste de entrega y los horarios posibles.",
+    "allergensQuestion": "¿Cómo puedo saber los alérgenos de vuestros productos?",
+    "allergensAnswer": "En la descripción de cada producto detallamos los principales alérgenos (gluten, lactosa, fruto seco, huevo, etc.). Si tienes alguna intolerancia o necesidad especial, te recomendamos indicarlo al hacer el pedido o contactar con nosotros antes de confirmarlo. Haremos lo posible por adaptarnos.",
+    "pickupTimeQuestion": "¿En qué horario puedo recoger mi pedido en la tienda?",
+    "pickupTimeAnswer": "Los pedidos pueden recogerse en la pastelería dentro del horario de apertura indicado en la página de contacto. Cuando confirmemos tu pedido te indicaremos también el día y franja recomendada para la recogida, especialmente en el caso de tartas y encargos voluminosos.",
+    "changesQuestion": "¿Puedo modificar o cancelar un pedido una vez hecho?",
+    "changesAnswer": "Si necesitas modificar o cancelar un pedido, contacta con nosotros lo antes posible. Para productos del día, intentaremos adaptarnos si todavía no han sido elaborados. En el caso de tartas personalizadas o encargos especiales, puede que no sea posible hacer cambios si la producción ya está en marcha."
+  },
+  "blog": {
+    "metaDescription": "Historias, curiosidades y secretos de nuestro obrador."
+  },
+  "about": {
+    "metaDescription": "Tradición, tiempo y oficio: la historia y forma de trabajar de la pastelería."
+  }
+
+}

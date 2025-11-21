@@ -1,0 +1,53 @@
+/* assets/css/theme.base.css */
+/* Tema BASE (el que existia abans, ara alineat amb tokens) */
+
+:root {
+  /* Legacy (per compatibilitat) */
+  --color-primary: #a0522d;
+  --color-primary-dark: #7b3e1f;
+  --color-accent: #ffb84d;
+  --color-background: #f8f5f2;
+  --color-surface: #FFF8E9; /* MEL SUAU */
+  --color-text-main: #333333;
+  --color-text-muted: #666666;
+  --color-border: #e0e0e0;
+
+  --font-headings: "Helvetica Neue", Arial, sans-serif;
+  --font-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.05);
+
+  /* === Token mapping === */
+
+  /* Backgrounds */
+  --color-bg: var(--color-background);
+  --color-bg-secondary: #ffffff;
+  --color-surface: #FFF8E9;
+
+  /* Text hierarchy */
+  --color-text-strong: #222222;
+  --color-text: var(--color-text-main);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-brand: var(--color-primary);
+
+  /* Accents */
+  --color-accent: var(--color-primary);
+  --color-accent-soft: var(--color-accent);
+
+  /* Botons */
+  --color-button: var(--color-primary);
+  --color-button-hover: var(--color-primary-dark);
+
+  /* Fonts */
+  --font-heading: var(--font-headings);
+  --font-body: var(--font-default);
+
+  /* Radius + ombres */
+  --radius-s: 4px;
+  --radius-m: 8px;
+  --radius-l: 16px;
+  --shadow-soft: var(--shadow-card);
+  --shadow-strong: 0 8px 24px rgba(0,0,0,0.10);
+}

@@ -1,0 +1,427 @@
+// src/services/shopify.ts
+import  {createCdnHelper } from '~/utils/cdn';
+/* --------------------------------------------------------------------------
+ * SHOPIFY MODE (mock vs real)
+ * -------------------------------------------------------------------------- */
+
+const SHOPIFY_MODE: 'mock' | 'real' =
+  process.env.NODE_ENV === 'production' ? 'real' : 'mock';
+
+/* --------------------------------------------------------------------------
+ * LOCALES
+ * -------------------------------------------------------------------------- */
+
+export type Locale = 'ca' | 'es' | 'en';
+
+/* --------------------------------------------------------------------------
+ * SHOPIFY PURE MODEL (Storefront API PRODUCT)
+ * -------------------------------------------------------------------------- */
+
+export interface ProductImage {
+  url: string;
+  altText?: string | null;
+  width?: number | null;
+  height?: number | null;
+}
+
+export interface ShopifyProduct {
+  id: string;
+  handle: string;
+  title: string;
+  description: string;
+  featuredImage: ProductImage | null;
+  images: ProductImage[];
+  priceMin: number;
+  priceMax: number;
+  availableForSale: boolean;
+}
+
+/* --------------------------------------------------------------------------
+ * IMAGE HELPERS (REAL vs MOCK)
+ * -------------------------------------------------------------------------- */
+
+// Shopify real — rep URL absoluta de GraphQL
+function getImageUrl(
+  shopifyUrl: string,
+  alt?: string,
+  width?: number,
+  height?: number,
+): ProductImage {
+  return {
+    url: shopifyUrl,
+    altText: alt ?? null,
+    width: width ?? null,
+    height: height ?? null,
+  };
+}
+
+// Mock — URL absolut LOCAL → coherent amb format Shopify
+function mockImageUrl(slug: string, alt?: string): ProductImage {
+  // IMPORTANT: useRuntimeConfig només s'ha de cridar dins de funcions,
+  // no al top-level del mòdul.
+  // const config = useRuntimeConfig();
+  // const project="boulangeire"
+  // const base = config.public.mockCdnBaseUrl+project+"/"; // ex: https://develmts.github.io/ + "boulangerie +'/'
+  const cdn= createCdnHelper('https://develmts.github.io/dev-cdn/projects').cdnFor;
+
+  return {
+    // url: `${base}products/${slug}.png`, // URL ABSOLUTA SIMULADA
+    url: cdn('boulangerie',`products/${slug}.png`), // URL ABSOLUTA SIMULADA
+    altText: alt ?? slug,
+    width: null,
+    height: null,
+  };
+}
+
+/* --------------------------------------------------------------------------
+ * MOCK LOCALIZATION MAPS (Shopify @inContext simulation)
+ * -------------------------------------------------------------------------- */
+
+const MOCK_TITLES: Record<string, Record<Locale, string>> = {
+  'baguette-tradition': {
+    ca: 'Baguette tradicional',
+    es: 'Baguette tradicional',
+    en: 'Traditional baguette',
+  },
+  'croissant-mantega': {
+    ca: 'Croissant de mantega',
+    es: 'Croissant de mantequilla',
+    en: 'Butter croissant',
+  },
+  'pain-au-chocolat': {
+    ca: 'Pain au chocolat',
+    es: 'Napolitana de chocolate',
+    en: 'Pain au chocolat',
+  },
+};
+
+const MOCK_DESCRIPTIONS: Record<string, Record<Locale, string>> = {
+  'baguette-tradition': {
+    ca: 'Baguette cruixent elaborada amb massa mare i fermentació lenta.',
+    es: 'Baguette crujiente elaborada con masa madre y fermentación lenta.',
+    en: 'Crispy baguette made with sourdough and slow fermentation.',
+  },
+  'croissant-mantega': {
+    ca: 'Croissant fullat 100% mantega.',
+    es: 'Croissant hojaldrado 100% mantequilla.',
+    en: '100% butter flaky croissant.',
+  },
+  'pain-au-chocolat': {
+    ca: 'Massa de croissant amb dues barres de xocolata negra.',
+    es: 'Masa de croissant con dos barritas de chocolate negro.',
+    en: 'Croissant dough with two sticks of dark chocolate.',
+  },
+};
+
+/* --------------------------------------------------------------------------
+ * MOCK PRODUCT DATA (Shopify Pure) — LAZY + LOCALIZATION
+ * -------------------------------------------------------------------------- */
+
+function getMockProducts(locale: Locale): ShopifyProduct[] {
+  const base: ShopifyProduct[] = [
+    {
+      id: 'gid://shopify/Product/1',
+      handle: 'baguette-tradition',
+      title: 'Baguette Tradition', // valor per defecte (fallback)
+      description:
+        'Baguette cruixent elaborada amb massa mare i fermentació lenta.',
+      featuredImage: mockImageUrl('baguette'),
+      images: [mockImageUrl('baguette'), mockImageUrl('baguette_2')],
+      priceMin: 1.2,
+      priceMax: 1.2,
+      availableForSale: true,
+    },
+    {
+      id: 'gid://shopify/Product/2',
+      handle: 'croissant-mantega',
+      title: 'Croissant de Mantega',
+      description: 'Croissant fullat 100% mantega.',
+      featuredImage: mockImageUrl('croissant'),
+      images: [mockImageUrl('croissant')],
+      priceMin: 1.4,
+      priceMax: 1.4,
+      availableForSale: true,
+    },
+    {
+      id: 'gid://shopify/Product/3',
+      handle: 'pain-au-chocolat',
+      title: 'Pain au chocolat',
+      description: 'Massa de croissant amb dues barres de xocolata negra.',
+      featuredImage: mockImageUrl('pain-au-chocolat'),
+      images: [mockImageUrl('pain-au-chocolat')],
+      priceMin: 1.6,
+      priceMax: 1.6,
+      availableForSale: true,
+    },
+  ];
+
+  // Simulació de Shopify @inContext(language: locale)
+  return base.map((p) => {
+    const titleMap = MOCK_TITLES[p.handle];
+    const descMap = MOCK_DESCRIPTIONS[p.handle];
+
+    const localizedTitle =
+      titleMap?.[locale] ?? titleMap?.ca ?? p.title;
+
+    const localizedDescription =
+      descMap?.[locale] ?? descMap?.ca ?? p.description;
+
+    return {
+      ...p,
+      title: localizedTitle,
+      description: localizedDescription,
+    };
+  });
+}
+
+/* --------------------------------------------------------------------------
+ * PRODUCT FUNCTIONS (MOCK)
+ * -------------------------------------------------------------------------- */
+
+async function MockGetProductByHandle(
+  handle: string,
+  locale: Locale,
+): Promise<ShopifyProduct | null> {
+  await new Promise((r) => setTimeout(r, 80));
+  return getMockProducts(locale).find((p) => p.handle === handle) ?? null;
+}
+
+async function MockGetAllProducts(
+  limit = 20,
+  locale: Locale,
+): Promise<ShopifyProduct[]> {
+  await new Promise((r) => setTimeout(r, 80));
+  return getMockProducts(locale).slice(0, limit);
+}
+
+/* --------------------------------------------------------------------------
+ * PRODUCT FUNCTIONS (REAL — TO IMPLEMENT)
+ * -------------------------------------------------------------------------- */
+
+async function RealGetProductByHandle(
+  handle: string,
+  locale: Locale,
+): Promise<ShopifyProduct | null> {
+  // TODO: fer crida real GraphQL a Shopify, amb @inContext(language: locale)
+  //
+  // Exemple de mapping:
+  //
+  // const data = await shopifyGraphQL<ProductQuery>(...)
+  // const p = data.product
+  // if (!p) return null
+  //
+  // return {
+  //   id: p.id,
+  //   handle: p.handle,
+  //   title: p.title,
+  //   description: p.description,
+  //   featuredImage: p.featuredImage
+  //     ? getImageUrl(
+  //         p.featuredImage.url,
+  //         p.featuredImage.altText,
+  //         p.featuredImage.width,
+  //         p.featuredImage.height,
+  //       )
+  //     : null,
+  //   images: p.images.nodes.map(img =>
+  //     getImageUrl(img.url, img.altText, img.width, img.height)
+  //   ),
+  //   priceMin: parseFloat(p.priceRange.minVariantPrice.amount),
+  //   priceMax: parseFloat(p.priceRange.maxVariantPrice.amount),
+  //   availableForSale: p.availableForSale,
+  // }
+
+  return null;
+}
+
+async function RealGetAllProducts(
+  limit: number,
+  locale: Locale,
+): Promise<ShopifyProduct[]> {
+  // TODO: crida real GraphQL a Shopify (products(first: limit, ...))
+  // i mapar resposta -> ShopifyProduct[]
+  return [];
+}
+
+/* --------------------------------------------------------------------------
+ * PUBLIC PRODUCT API (stable, usada per la UI)
+ * -------------------------------------------------------------------------- */
+
+export async function getProductByHandle(
+  handle: string,
+  locale: Locale = 'ca',
+): Promise<ShopifyProduct | null> {
+  return SHOPIFY_MODE === 'mock'
+    ? MockGetProductByHandle(handle, locale)
+    : RealGetProductByHandle(handle, locale);
+}
+
+export async function getProducts(
+  limit: number = 20,
+  locale: Locale = 'ca',
+): Promise<ShopifyProduct[]> {
+  return SHOPIFY_MODE === 'mock'
+    ? MockGetAllProducts(limit, locale)
+    : RealGetAllProducts(limit, locale);
+}
+
+/* --------------------------------------------------------------------------
+ * CART INTERFACES
+ * -------------------------------------------------------------------------- */
+
+export interface CartLineInput {
+  productId: string;
+  quantity: number;
+}
+
+export interface CartLine {
+  id: string;
+  productId: string;
+  quantity: number;
+}
+
+export interface Cart {
+  id: string;
+  lines: CartLine[];
+  totalQuantity: number;
+}
+
+/* --------------------------------------------------------------------------
+ * CART MOCK (en memòria)
+ * -------------------------------------------------------------------------- */
+
+let MOCK_CART: Cart = {
+  id: 'mock-cart',
+  lines: [],
+  totalQuantity: 0,
+};
+
+function recalcCartTotals(cart: Cart): Cart {
+  const totalQuantity = cart.lines.reduce(
+    (sum, line) => sum + line.quantity,
+    0,
+  );
+  return { ...cart, totalQuantity };
+}
+
+function ensureMockCart(): Cart {
+  MOCK_CART = recalcCartTotals(MOCK_CART);
+  return MOCK_CART;
+}
+
+/* --------------------------------------------------------------------------
+ * CART FUNCTIONS (MOCK + REAL PLACEHOLDERS)
+ * -------------------------------------------------------------------------- */
+
+export async function createCart(
+  initialLines: CartLineInput[] = [],
+): Promise<Cart> {
+  if (SHOPIFY_MODE === 'mock') {
+    await new Promise((r) => setTimeout(r, 80));
+    MOCK_CART = {
+      id: 'mock-cart',
+      lines: initialLines.map((l, i) => ({
+        id: `mock-line-${Date.now()}-${i}`,
+        productId: l.productId,
+        quantity: l.quantity,
+      })),
+      totalQuantity: 0,
+    };
+    return ensureMockCart();
+  }
+  // TODO (mode real): cartCreate via Storefront API
+  throw new Error('createCart (real) no implementat encara.');
+}
+
+export async function getCart(): Promise<Cart> {
+  if (SHOPIFY_MODE === 'mock') {
+    await new Promise((r) => setTimeout(r, 40));
+    return ensureMockCart();
+  }
+  // TODO (mode real): cart(id: ...) via Storefront API
+  throw new Error('getCart (real) no implementat encara.');
+}
+
+export async function addCartLines(
+  lines: CartLineInput[],
+): Promise<Cart> {
+  if (SHOPIFY_MODE === 'mock') {
+    await new Promise((r) => setTimeout(r, 40));
+    const cart = ensureMockCart();
+    const newLines = [...cart.lines];
+
+    for (const line of lines) {
+      const existing = newLines.find(
+        (l) => l.productId === line.productId,
+      );
+      if (existing) {
+        existing.quantity += line.quantity;
+      } else {
+        newLines.push({
+          id: `mock-line-${Date.now()}-${Math.random()
+            .toString(16)
+            .slice(2)}`,
+          productId: line.productId,
+          quantity: line.quantity,
+        });
+      }
+    }
+
+    MOCK_CART = recalcCartTotals({ ...cart, lines: newLines });
+    return ensureMockCart();
+  }
+  // TODO (mode real): cartLinesAdd
+  throw new Error('addCartLines (real) no implementat encara.');
+}
+
+export async function updateCartLineQuantity(
+  lineId: string,
+  quantity: number,
+): Promise<Cart> {
+  if (SHOPIFY_MODE === 'mock') {
+    await new Promise((r) => setTimeout(r, 40));
+    const cart = ensureMockCart();
+    MOCK_CART = recalcCartTotals({
+      ...cart,
+      lines: cart.lines.map((l) =>
+        l.id === lineId ? { ...l, quantity } : l,
+      ),
+    });
+    return ensureMockCart();
+  }
+  // TODO (mode real): cartLinesUpdate
+  throw new Error('updateCartLineQuantity (real) no implementat encara.');
+}
+
+export async function removeCartLine(lineId: string): Promise<Cart> {
+  if (SHOPIFY_MODE === 'mock') {
+    await new Promise((r) => setTimeout(r, 40));
+    const cart = ensureMockCart();
+    MOCK_CART = recalcCartTotals({
+      ...cart,
+      lines: cart.lines.filter((l) => l.id !== lineId),
+    });
+    return ensureMockCart();
+  }
+  // TODO (mode real): cartLinesRemove
+  throw new Error('removeCartLine (real) no implementat encara.');
+}
+
+export async function clearCart(): Promise<Cart> {
+  if (SHOPIFY_MODE === 'mock') {
+    await new Promise((r) => setTimeout(r, 40));
+    MOCK_CART = { id: 'mock-cart', lines: [], totalQuantity: 0 };
+    return ensureMockCart();
+  }
+  // TODO (mode real): buidar cart via Storefront API
+  throw new Error('clearCart (real) no implementat encara.');
+}
+
+// Manté la signatura original de addToCart per compatibilitat amb la UI
+export async function addToCart(
+  productId: string,
+  quantity: number,
+): Promise<boolean> {
+  await addCartLines([{ productId, quantity }]);
+  return true;
+}

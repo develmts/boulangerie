@@ -1,0 +1,37 @@
+/* assets/css/theme.french-minimal.css */
+/* Paleta 2 – French Minimal */
+
+:root[data-theme="french-minimal"] {
+  --color-primary: #D4A373;
+  --color-primary-dark: #1A1A1A;
+  --color-background: #FFFFFF;
+  --color-surface: #FAFAF7; /* IVORI PARISIEN */
+  --color-text-main: #1A1A1A;
+  --color-text-muted: #666666;
+  --color-border: #e0e0e0;
+
+  --color-bg: #FFFFFF;
+  --color-bg-secondary: #F2F2F2;
+  --color-surface: #FAFAF7;
+
+  --color-text-strong: #111111;
+  --color-text: #1A1A1A;
+  --color-text-muted: #666666;
+  --color-text-brand: #D4A373;
+
+  --color-accent: #D4A373;
+  --color-accent-soft: #f3ddc5;
+
+  --color-button: #1A1A1A;
+  --color-button-hover: #D4A373;
+
+  --font-heading: "Merriweather", serif;
+  --font-body: "Roboto", sans-serif;
+
+  --radius-s: 4px;
+  --radius-m: 8px;
+  --radius-l: 16px;
+
+  --shadow-soft: 0 2px 8px rgba(0,0,0,0.05);
+  --shadow-strong: 0 8px 24px rgba(0,0,0,0.12);
+}

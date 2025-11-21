@@ -1,0 +1,80 @@
+{
+  "header": {
+    "title": "Artisan Bakery Mockup"
+  },
+  "footer": {
+    "copyright": "All rights reserved"
+  },
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "contact": "Contact",
+    "about": "About us",
+    "privacy": "Privacy",
+    "legal": "Legal notice",
+    "cookies": "Cookies policy",
+    "faq": "FAQ",
+    "blog": "Blog"
+
+  },
+  "product": {
+    "heading": "Our Daily Highlights",
+    "add_to_cart": "Add to Cart",
+    "adding": "Adding...",
+    "unavailable": "Unavailable"
+  },
+  "cta": {
+    "view_products": "View Our Products"
+  },
+  "sections": {
+    "phase_2_title": "Online Presence Management (Phase II)",
+    "loading": "Loading Headless Mockup. Please wait..."
+  },
+  "contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "Get in touch with Pastisseria Piella. We’re here to help you with orders, questions and general information.",
+
+    "title": "Contact",
+    "subtitle": "Let’s talk. We’re here to help with your orders and questions.",
+
+    "infoTitle": "Contact details",
+    "addressLabel": "Address",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "hoursLabel": "Opening hours",
+
+    "socialTitle": "Social media",
+
+    "formTitle": "Send us a message",
+    "formName": "Name",
+    "formEmail": "Email",
+    "formMessage": "Message",
+    "formSubmit": "Send",
+    "formFeedback": "Message successfully sent."
+  },
+  "faq": {
+    "metaTitle": "Frequently asked questions",
+    "metaDescription": "We answer the most common questions about orders, collection, delivery and allergens at Pastisseria Piella.",
+    "title": "Frequently asked questions",
+    "subtitle": "Here you’ll find answers to the most common questions about online orders, collection, delivery and allergen information.",
+    "ordersTimeQuestion": "How far in advance should I place my order?",
+    "ordersTimeAnswer": "For daily products (croissants, sweet breads, assorted pastries) we recommend placing your order at least 24 hours in advance. For custom cakes or special orders, the minimum time is usually 48–72 hours, depending on volume and design.",
+    "customCakesQuestion": "Do you make custom cakes for birthdays or events?",
+    "customCakesAnswer": "Yes. We can customise size, message, some flavours and basic decorations. If you have a specific idea, please mention it in the order form or call us to discuss the details. We’ll confirm availability and pricing before we start preparing it.",
+    "deliveryAreaQuestion": "Do you offer home delivery? Which areas do you cover?",
+    "deliveryAreaAnswer": "We offer home delivery within our local delivery area. During checkout you can enter your postal code to see if delivery is available, as well as the delivery cost and possible time slots.",
+    "allergensQuestion": "How can I find allergen information for your products?",
+    "allergensAnswer": "In each product description we indicate the main allergens (gluten, lactose, nuts, eggs, etc.). If you have any intolerance or specific dietary need, we recommend mentioning it when placing your order or contacting us before confirming it. We’ll do our best to adapt where possible.",
+    "pickupTimeQuestion": "When can I come to collect my order?",
+    "pickupTimeAnswer": "Orders can be collected at the shop during the opening hours shown on the contact page. Once your order is confirmed, we’ll also let you know the recommended day and time slot for collection, especially for cakes and larger orders.",
+    "changesQuestion": "Can I change or cancel an order once it’s placed?",
+    "changesAnswer": "If you need to change or cancel an order, please contact us as soon as possible. For daily products, we’ll try to adapt if they haven’t been prepared yet. For custom cakes or special orders, changes may not be possible if production has already started."
+  },
+  "blog": {
+    "metaDescription": "Stories, curiosities and behind-the-scenes from our bakery."
+  },
+  "about": {
+    "metaDescription": "Tradition, craft and patience: the story and philosophy of our bakery."
+  }
+
+}

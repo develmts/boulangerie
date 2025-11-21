@@ -1,0 +1,37 @@
+/* assets/css/theme.artisanal-warm.css */
+/* Paleta 1 – Artisanal Warm */
+
+:root[data-theme="artisanal-warm"] {
+  --color-primary: #C49E7B;
+  --color-primary-dark: #B87333;
+  --color-background: #F7F3EE;
+  --color-surface: #FEF8F0; /* CREMA AMETLLA SUAU */
+  --color-text-main: #2E2D2B;
+  --color-text-muted: #7D7D7D;
+  --color-border: #e3d7ca;
+
+  --color-bg: #F7F3EE;
+  --color-bg-secondary: #fffaf3;
+  --color-surface: #FEF8F0;
+
+  --color-text-strong: #2B241D;
+  --color-text: #2E2D2B;
+  --color-text-muted: #7D7D7D;
+  --color-text-brand: #C49E7B;
+
+  --color-accent: #C49E7B;
+  --color-accent-soft: #f1e0cf;
+
+  --color-button: #B87333;
+  --color-button-hover: #7D7D7D;
+
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+
+  --radius-s: 4px;
+  --radius-m: 8px;
+  --radius-l: 16px;
+
+  --shadow-soft: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-strong: 0 8px 24px rgba(0,0,0,0.14);
+}

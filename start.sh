@@ -1,11 +1,8 @@
 #!/bin/sh
 
-# Fichero: start.sh
-# Ubicación: Directorio raíz
-
-echo "--- Instalando dependencias de Node.js (solo si no existen) ---"
+echo "--- Instaling  NodeJs dependencies sif they don't exists) ---"
 npm install
 
-echo "--- Lanzando Nuxt.js en modo desarrollo (Puerto 3000) ---"
+echo "--- Launching NuxtJS app  ---"
 # Lanza la aplicación. --host 0.0.0.0 es crucial para Docker/Caddy.
 npm run dev -- --host 0.0.0.0

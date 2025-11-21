@@ -15,7 +15,7 @@ node_modules
 dist
 dist-ssr
 *.local
-
+sandbox
 # environment / secrets
 .env
 .env-local
