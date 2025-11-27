@@ -3,44 +3,51 @@ import { ref } from 'vue';
 import AppHeader from '~/components/AppHeader.vue';
 import AppFooter from '~/components/AppFooter.vue';
 import Sidebar from '~/components/Sidebar.vue';
+import AuthOverlay from '~/components/AuthOverlay.vue';
 import DevThemeSwitcher from '~/components/DevThemeSwitcher.client.vue';
+import ErrorCard from '~/components/ErrorCard.vue';
+import { useAppError } from '~/composables/useAppError';
+import { useConsentScriptLoader }  from  '~/composables/UseConsentScriptLoader'
+
+const { loadScript } = useConsentScriptLoader()
 
 const isSidebarOpen = ref(false);
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
+const { error, isVisible, clearError } = useAppError()
+
+onMounted(() => {
+  //loadScript('analytics', 'https://www.googletagmanager.com/gtag/js?id=G-XXXX')
+})
+
 </script>
 
 <template>
   <div class="app-layout">
     <AppHeader @toggle-sidebar="isSidebarOpen = !isSidebarOpen"/>
-
-    <!-- <div class="app-body"> -->
-      <!-- Tirador lateral -->
-      <!--
-      <button
-        type="button"
-        class="sidebar-trigger"
-        :class="isSidebarOpen ? 'sidebar-trigger--open' : 'sidebar-trigger--closed'"
-        @click="toggleSidebar"
-        aria-label="Toggle sidebar"
-      >
-        <span class="trigger-icon">
-          {{ isSidebarOpen ? '‹' : '›' }}
-        </span>
-      </button>
-      -->
-      <!-- Sidebar simple -->
+      <CookieBanner />
       <Sidebar v-model:open="isSidebarOpen" />
 
       <main class="app-main-content">
         <slot />
       </main>
-    <!-- </div> -->
+      <AuthOverlay />
 
     <DevThemeSwitcher />
+    <MiniCartDrawer />
     <AppFooter />
+    <!-- 🔔 Error d’aplicació en mode modal (overlay + blur) -->
+    <ErrorCard
+      v-if="isVisible && error"
+      mode="modal"
+      :status-code="error.statusCode ?? undefined"
+      :title="error.title"
+      :description="error.description"
+      @primary="clearError"
+    >
+    </ErrorCard>
   </div>
 </template>
 

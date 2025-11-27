@@ -14,13 +14,18 @@
     "legal": "Avís legal",
     "cookies": "Cookies",
     "faq": "PMF",
-    "blog": "Blog"
+    "blog": "Blog",
+    "account": "Compte",
+    "cart": "Cistella",
+    "login": "Identifica't",
+    "logout": "Tanca sessió"
   },
   "product": {
     "heading": "Els nostres Destacats del Día",
     "add_to_cart": "Afegir a la cistella",
     "adding": "Afegint...",
-    "unavailable": "No Disponible"
+    "unavailable": "No Disponible",
+    "added": "afegit"
   },
   "cta": {
     "view_products": "Veure els noteres Productes"
@@ -84,7 +89,97 @@
   },
   "about": {
     "metaDescription": "Tradició, temps i ofici: la història i la manera de treballar de la pastisseria."
+  }, 
+  "shop": {
+    "title": "Botiga",
+    "subtitle": "Productes artesans fets cada dia",
+
+    "loading": "Carregant productes...",
+    "error_loading": "No s'ha pogut carregar la llista de productes",
+
+    "cart": {
+      "label": "Cistella"
+    },
+
+    "user": {
+      "greetingShort": "Compte"
+    },
+
+    "filters": {
+      "categoryLabel": "Categoria",
+      "categoryAll": "Totes",
+      "categoryBread": "Pa",
+      "categoryPastries": "Brioixeria",
+      "categoryCakes": "Pastisseria",
+
+      "sortLabel": "Ordenar",
+      "sortDefault": "Per defecte",
+      "sortPriceAsc": "Preu: més barat primer",
+      "sortPriceDesc": "Preu: més car primer",
+
+      "resultsSuffix": "resultats"
+    }
+  },
+  "userMenu": {
+    "loginOrAccount": "Inicia sessió o accedeix al teu compte",
+    "orders": "Les meves comandes",
+    "contact": "Contacte",
+    "about": "Sobre nosaltres",
+    "welcome": "Benvingut, ",
+    "profile": "Perfil", 
+    "changePassword": "Canvia la clau"
+  },
+  "analytics": {
+    "title": "Anàlisi de visites",
+    "selectPeriod": "Selecciona període",
+    "period": {
+      "today": "Avui",
+      "week": "Última setmana",
+      "custom": "Personalitzat"
+    },
+    "topPages": "Top 5 pàgines més vistes ({period})",
+    "visitsOverTime": "Distribució de visites",
+    "chartTitleTopPages": "Pàgines més vistes",
+    "chartTitleVisitsOverTime": "Visites per dia",
+    "seriesTotalVisits": "Visites totals",
+    "rawTotals": "Totals per dia",
+    "views": "{count} visites"
+  },
+
+  "cookies": {
+    "banner": {
+      "title": "Aquest lloc web utilitza cookies",
+      "text": "Utilitzem cookies per millorar la teva experiència, analitzar l’ús del lloc i mostrar contingut personalitzat. Pots acceptar totes les cookies o configurar les teves preferències.",
+      "acceptAll": "Acceptar totes",
+      "denyAll": "Rebutjar totes",
+      "customize": "Personalitzar"
+    },
+
+    "settings": {
+      "title": "Configuració de cookies",
+      "intro": "Selecciona quines categories de cookies vols permetre. Pots canviar-les en qualsevol moment.",
+      "save": "Desar configuració",
+
+      "necessary": {
+        "title": "Cookies necessàries",
+        "description": "Essencials per al funcionament del lloc i no es poden desactivar.",
+        "badge": "Obligatòries"
+      },
+
+      "preferences": {
+        "title": "Preferències",
+        "description": "Guarden informació com l’idioma preferit o configuracions personalitzades."
+      },
+
+      "analytics": {
+        "title": "Analítiques",
+        "description": "Ens ajuden a entendre com es fa servir el lloc per millorar l’experiència."
+      },
+
+      "marketing": {
+        "title": "Publicitat",
+        "description": "S’utilitzen per mostrar anuncis personalitzats segons el teu perfil de navegació."
+      }
+    }
   }
-
-
 }

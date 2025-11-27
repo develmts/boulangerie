@@ -1,51 +1,36 @@
 <script setup lang="ts">
-import LanguageSwitcher from './LanguageSwitcher.vue';
-import { createNavLinks } from '~/config/navLinks';
+import { computed } from 'vue'
+import LanguageSwitcher from './LanguageSwitcher.vue'
+import HeaderCartButton from '~/components/HeaderCartButton.vue'
+import HeaderUserButton from '~/components/HeaderUserButton.vue'
+
+import { createNavLinks } from '~/config/navLinks'
 
 const emit = defineEmits<{
   (e: 'toggle-sidebar'): void
 }>()
 
-const { t } = useI18n(); 
-const localePath = useLocalePath(); 
-const route = useRoute();
+const { t } = useI18n()
+const localePath = useLocalePath()
+const route = useRoute()
 
-const links = computed(() => createNavLinks(t, localePath));
+const links = computed(() => createNavLinks(t, localePath))
 
 function handleLogoClick() {
   emit('toggle-sidebar')
 }
-
 </script>
 
 <template>
   <header>
-    <!-- LOGO + TÍTOL -->
-    <!-- 
-    <div class="brand-identity-group">
-      <NuxtLink :to="localePath('/')" class="logo-link">
-        <img src="/assets/images/logo.png" alt="Piella Logo" class="brand-logo" />
-      </NuxtLink>
-      
-      <h1 class="brand-name-title">
-        {{ t('header.title') }}
-      </h1>
-    </div>
-    -->
-    <!-- El logo deixa de ser "Home" i passa a ser tirador -->
     <button class="header-logo-button" type="button" @click="handleLogoClick">
-      <!-- aquí pots tenir logo, nom, etc. -->
-      <img src="/assets/images/logo.png" alt="Piella Logo" class="brand-logo" /> 
-      <!-- <span class="header-logo-text">
-        {{ t('header.title') }}
-      </span> -->
+      <img src="/assets/images/logo.png" alt="Piella Logo" class="brand-logo" />
     </button>
+
     <h1 class="brand-name-title">
-        {{ t('header.title') }}
-     </h1>
+      {{ t('header.title') }}
+    </h1>
 
-
-    <!-- NAVEGACIÓ (desktop) -->
     <nav class="main-nav">
       <NuxtLink
         v-for="link in links"
@@ -57,26 +42,18 @@ function handleLogoClick() {
         {{ link.label }}
       </NuxtLink>
     </nav>
-    
+
+    <div class="app-header-right">
+      <HeaderUserButton />
+      <HeaderCartButton />
+    </div>
+
     <!-- LANGUAGE SWITCHER -->
-    <LanguageSwitcher class="switcher-inline" /> 
+    <LanguageSwitcher class="switcher-inline" />
   </header>
 </template>
 
 <style scoped>
-/* header {
-  position: sticky; 
-  top: 0; 
-  z-index: 100; 
-  background-color: var(--color-surface); 
-  box-shadow: 0 1px 5px rgba(0,0,0,0.08); 
-  padding: 10px 20px;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center; 
-} */
-
 header {
   position: fixed;
   top: 0;
@@ -105,14 +82,13 @@ header {
   font-size: 1rem;
 }
 
-/* ----------------------------------------------------- */
 .logo-link {
   color: var(--color-primary);
   text-decoration: none;
 }
 
 .brand-logo {
-  height: 40px; 
+  height: 40px;
   width: auto;
 }
 
@@ -129,14 +105,12 @@ header {
   margin: 0;
 }
 
-/* NAVEGACIÓ (Desktop) */
 .main-nav {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* Base link */
 .nav-link {
   position: relative;
   margin: 0 8px;
@@ -147,7 +121,6 @@ header {
   transition: color 0.15s ease;
 }
 
-/* Subratllat suau en hover/active */
 .nav-link::after {
   content: '';
   position: absolute;
@@ -163,7 +136,6 @@ header {
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
-/* Hover highlight */
 .nav-link:hover {
   color: var(--color-primary, #c26a3d);
 }
@@ -173,7 +145,6 @@ header {
   transform: scaleX(1);
 }
 
-/* Active highlight */
 .nav-link--active {
   color: var(--color-primary, #c26a3d);
   font-weight: 600;
@@ -184,7 +155,12 @@ header {
   transform: scaleX(1);
 }
 
-/* BOTÓ DE MENÚ LATERAL (placeholder si mai el recuperes) */
+.app-header-right {
+  display: flex;
+  align-items: center;  /* 📌 clau: els centra verticalment */
+  gap: 0.5rem;          /* separació entre botó d’usuari i cistella */
+}
+
 .menu-button {
   background: none;
   border: none;
@@ -194,12 +170,8 @@ header {
   color: var(--color-primary);
 }
 
-/* SWITCHER (Inline per defecte) */
-.switcher-inline {
-  /* El flexbox del header ja s'encarrega de posicionar-lo */
-}
+.switcher-inline {}
 
-/* 📱 VISTA MÒBIL: només LOGO + LANGUAGE SWITCHER */
 @media (max-width: 768px) {
   header {
     padding: 8px 12px;

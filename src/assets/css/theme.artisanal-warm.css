@@ -27,6 +27,7 @@
 
   --font-heading: "Playfair Display", serif;
   --font-body: "Inter", sans-serif;
+  --font-button : 600 0.95rem/1.2 "Playfair Display", serif;
 
   --radius-s: 4px;
   --radius-m: 8px;

@@ -1,7 +1,7 @@
 <!-- src/pages/legal.vue -->
 <script setup lang="ts">
 import { type Locale } from '~/services/shopify'
-import { getContentBySlug, type ContentBlock } from '~/services/contentful'
+import { getCmsPage, type CmsPage } from '~/services/cms'
 
 definePageMeta({
   layout: 'default',
@@ -10,14 +10,14 @@ definePageMeta({
 const { t, locale } = useI18n()
 
 const loading = ref(true)
-const content = ref<ContentBlock | null>(null)
+const content = ref<CmsPage | null>(null)
 
-const slug = 'legal-terms'
+const slug = 'legal-notice'
 
 async function loadData(currentLocale: Locale) {
   loading.value = true
   try {
-    const block = await getContentBySlug(slug, currentLocale)
+    const block = await getCmsPage(slug, currentLocale)
     content.value = block
   } catch (err) {
     console.error('Error carregant Avís legal / Termes:', err)
@@ -39,24 +39,32 @@ watch(locale, newLocale => {
 <template>
   <div class="maqueta-container legal-page">
     <div v-if="loading" class="loading-message">
-      {{ t('sections.loading') }}
+      <ActionFeedback 
+        mode="text"
+        text-variant="reveal"
+        :size="128"
+        :text="t('sections.loading')"
+        :loop="true"
+      />
     </div>
 
     <div v-else>
       <section v-if="content" class="legal-section">
-        <h1 class="legal-title">
-          {{ content.title }}
-        </h1>
+        <div class="blog-content">
+          <h1 class="blog-title">{{ content?.title }}</h1>
 
-        <article class="legal-body" v-html="content.body" />
+          <article class="blog-body">
+            <CmsRichText v-if="content" :block="content"></CmsRichText>
+          </article>
+        </div>
       </section>
 
       <section v-else class="legal-section">
         <h1 class="legal-title">
-          {{ t('legal.terms_fallback_title', 'Avís legal i termes d’ús') }}
+          {{ t('legal.terms_fallback_title') }}
         </h1>
         <p class="legal-body">
-          {{ t('legal.terms_fallback_body', 'El contingut legal no està disponible en aquests moments.') }}
+          {{ t('legal.terms_fallback_body') }}
         </p>
       </section>
     </div>

@@ -1,0 +1,35 @@
+<svg width="420" height="300" viewBox="0 0 420 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Oval exterior (traç fi) -->
+  <ellipse cx="210" cy="150" rx="185" ry="120"
+           stroke="#C85B63" stroke-width="8" fill="none"/>
+
+  <!-- Text superior: PASTISSERIA (sans-serif, dins l'el·lipse) -->
+  <text x="210" y="115"
+        font-family="Arial, Helvetica, system-ui, sans-serif"
+        font-size="34"
+        font-weight="600"
+        text-anchor="middle"
+        fill="#C85B63"
+        letter-spacing="2">
+    PASTISSERIA
+  </text>
+
+  <!-- Text principal: P i e L L a amb baseline lleugerament desfasada -->
+  <text x="210"
+        font-family="Quicksand, Nunito, Poppins, system-ui, sans-serif"
+        font-size="88"
+        font-weight="700"
+        text-anchor="middle"
+        fill="#C85B63">
+    <!-- Consonant lleugerament més baixa -->
+    <tspan x="150" y="196">P</tspan>
+    <!-- Vocal una mica més amunt -->
+    <tspan x="189" y="190">i</tspan>
+    <tspan x="216" y="192">e</tspan>
+    <!-- LL amb base una mica més baixa -->
+    <tspan x="252" y="196">L</tspan>
+    <tspan x="286" y="196">L</tspan>
+    <!-- Vocal final lleugerament més amunt -->
+    <tspan x="326" y="190">a</tspan>
+  </text>
+</svg>

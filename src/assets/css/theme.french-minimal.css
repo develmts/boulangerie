@@ -27,6 +27,7 @@
 
   --font-heading: "Merriweather", serif;
   --font-body: "Roboto", sans-serif;
+  --font-button : 600 0.95rem/1.2 "Merriweather", serif;
 
   --radius-s: 4px;
   --radius-m: 8px;

@@ -22,6 +22,7 @@
   /* Tipografies */
   --font-heading: system-ui, sans-serif;
   --font-body: system-ui, sans-serif;
+  --font-button : 600 0.95rem/1.2 , system-ui, sans-serif;
 
   /* Radius */
   --radius-s: 4px;

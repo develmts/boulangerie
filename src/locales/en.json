@@ -14,14 +14,17 @@
     "legal": "Legal notice",
     "cookies": "Cookies policy",
     "faq": "FAQ",
-    "blog": "Blog"
-
+    "blog": "Blog",
+    "account": "Account",
+    "cart": "Cart",
+    "login": "Log in"
   },
   "product": {
     "heading": "Our Daily Highlights",
     "add_to_cart": "Add to Cart",
     "adding": "Adding...",
-    "unavailable": "Unavailable"
+    "unavailable": "Unavailable",
+    "added": "added"
   },
   "cta": {
     "view_products": "View Our Products"
@@ -29,6 +32,15 @@
   "sections": {
     "phase_2_title": "Online Presence Management (Phase II)",
     "loading": "Loading Headless Mockup. Please wait..."
+  },
+  "home": {
+    "hero": {
+      "title": "Piella Pastry shop",
+      "subtitle": "Sweet crafts made every day in our workshop. Croissants, cakes and cakes made with our own recipes and quality ingredients.",
+      "primaryCta": "Veure productes",
+      "secondaryCta": "Contact",
+      "imageAlt": "Artisan products of the Piella Pastry Shop"
+    }
   },
   "contact": {
     "metaTitle": "Contact",
@@ -75,6 +87,101 @@
   },
   "about": {
     "metaDescription": "Tradition, craft and patience: the story and philosophy of our bakery."
-  }
+  },
+  "shop": {
+    "title": "Shop",
+    "subtitle": "Handcrafted products made fresh every day",
 
+    "loading": "Loading products...",
+    "error_loading": "Could not load the product list",
+
+    "cart": {
+      "label": "Cart"
+    },
+
+    "user": {
+      "greetingShort": "Account",
+      "menu": {
+        "title": "My account",
+        "signin": "Sign in",
+        "orders": "Orders",
+        "favorites": "Favorites",
+        "settings": "Settings",
+        "logout": "Log out"
+      }
+    },
+
+    "filters": {
+      "categoryLabel": "Category",
+      "categoryAll": "All",
+      "categoryBread": "Bread",
+      "categoryPastries": "Pastries",
+      "categoryCakes": "Cakes",
+
+      "sortLabel": "Sort",
+      "sortDefault": "Default",
+      "sortPriceAsc": "Price: low to high",
+      "sortPriceDesc": "Price: high to low",
+
+      "resultsSuffix": "results"
+    }
+  },
+  "userMenu": {
+    "loginOrAccount": "Sign in or access your account",
+    "orders": "My orders",
+    "contact": "Contact",
+    "about": "About us"
+  },
+  "analytics": {
+    "title": "Visit Analytics",
+    "selectPeriod": "Select period",
+    "period": {
+      "today": "Today",
+      "week": "Last week",
+      "custom": "Custom"
+    },
+    "topPages": "Top 5 most viewed pages ({period})",
+    "visitsOverTime": "Visit distribution",
+    "chartTitleTopPages": "Most viewed pages",
+    "chartTitleVisitsOverTime": "Visits per day",
+    "seriesTotalVisits": "Total visits",
+    "rawTotals": "Daily totals",
+    "views": "{count} views"
+  },
+  "cookies": {
+    "banner": {
+      "title": "This website uses cookies",
+      "text": "We use cookies to improve your experience, analyse site usage and show personalised content. You can accept all cookies or manage your preferences.",
+      "acceptAll": "Accept all",
+      "denyAll": "Reject all",
+      "customize": "Customize"
+    },
+
+    "settings": {
+      "title": "Cookie settings",
+      "intro": "Select which categories of cookies you want to allow. You can change them at any time.",
+      "save": "Save settings",
+
+      "necessary": {
+        "title": "Necessary cookies",
+        "description": "Essential for the functioning of the site and cannot be disabled.",
+        "badge": "Required"
+      },
+
+      "preferences": {
+        "title": "Preferences",
+        "description": "Store information such as preferred language or personalised configuration."
+      },
+
+      "analytics": {
+        "title": "Analytics",
+        "description": "Help us understand how the site is used so we can improve the experience."
+      },
+
+      "marketing": {
+        "title": "Marketing",
+        "description": "Used to display personalised ads based on your browsing profile."
+      }
+    }
+  }
 }

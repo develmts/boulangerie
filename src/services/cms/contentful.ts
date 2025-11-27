@@ -1,61 +1,32 @@
 // services/contentful.ts
 import type { Locale } from '~/services/shopify'
-export type ContentBlock = {
-  slug?: string
-  title: string
-  body?: string // HTML
-}
+import type { ContentBlock, StoredLocalizedBlock, CmsBlock, CmsPage } from './types'
+
+/**
+ * Bloc bàsic de contingut CMS.
+ * - slug: identificador lògic (p.ex. "about-us", "homepage-hero", "legal-privacy-policy")
+ * - title: títol del bloc/pàgina
+ * - body: HTML (string) que es renderitza amb v-html
+ */
 
 
+// export type ContentBlock = {
+//   slug?: string
+//   title: string
+//   body?: string // HTML
+// }
 
-export async function getContentBySlug(
-  slug: string,
-  locale: Locale,
-): Promise<ContentBlock | null> {
-  // Simulem una mica de latència de CMS
-  await new Promise(resolve => setTimeout(resolve, 200));
-  console.log(`✅ CONTENTFUL MOCK: EXECUCIÓ COMPLETA per ${locale}, slug="${slug}".`);
+// Per als mocks de Contentful: NO porta slug. moved to gtype.ts
+// export type StoredLocalizedBlock = {
+//   title: string
+//   body: string
+// }
 
-  const loc = locale as string;
-
-  // 1) Primer, mirem als mocks legals
-  const legalBySlug = LEGAL_MOCK_CONTENT[slug];
-  if (legalBySlug) {
-    const legalLocalized =
-      legalBySlug[locale] ?? legalBySlug['ca'] ?? null;
-
-    if (legalLocalized) {
-      return {
-        slug,
-        title: legalLocalized.title,
-        body: legalLocalized.body,
-      };
-    }
-  }
-
-  // 2) Després, mirem als mocks "generals" (hero, about-us, etc.)
-  const blockBySlug = MOCK_CONTENT[slug];
-  if (blockBySlug) {
-    const localized =
-      blockBySlug[locale] ?? blockBySlug['ca'] ?? null;
-
-    if (localized) {
-      return {
-        slug,
-        title: localized.title,
-        body: localized.body,
-      };
-    }
-  }
-
-  // 3) Si no hi ha res, retornem null
-  console.warn(
-    `⚠️ CONTENTFUL MOCK: cap contingut trobat per slug="${slug}", locale="${locale}".`,
-  );
-  return null;
-}
-
-const MOCK_CONTENT: Record<string, Record<Locale, ContentBlock>> = {
+/**
+ * Contingut “general” (hero, about, blocs informatius, etc.).
+ * Mantén aquí EXACTAMENT els mateixos textos que ja tens ara.
+ */
+export const MOCK_CONTENT: Record<string, Record<Locale, StoredLocalizedBlock>> = {
   'homepage-hero': {
     'ca': {
       title: 'Fornejant Tradició, sabor i Felicitat',
@@ -261,7 +232,10 @@ const MOCK_CONTENT: Record<string, Record<Locale, ContentBlock>> = {
 
 };
 
-// Mocks legals multi-idioma
+/**
+ * Contingut legal multi-idioma (privacy, terms, cookies…).
+ * També manté els textos tal com els tens ara.
+ */
 export const LEGAL_MOCK_CONTENT: Record<string, Record<Locale, ContentBlock>> = {
   'legal-privacy-policy': {
     ca: {
@@ -973,4 +947,53 @@ export const LEGAL_MOCK_CONTENT: Record<string, Record<Locale, ContentBlock>> = 
       `,
     },
   },
+}
+/**
+ * Helper legacy per compatibilitat.
+ * Si en algun punt antic del codi es fa servir getContentBySlug,
+ * seguirà funcionant. El CMS nou (cms/blocks.ts, cms/pages.ts)
+ * ja no ho necessita.
+ */
+export async function getContentBySlug(
+  slug: string,
+  locale: Locale,
+): Promise<CmsBlock | null> {
+
+  // Simulem una mica de latència de CMS (com feies abans)
+  await new Promise(resolve => setTimeout(resolve, 200))
+
+  // 1) Primer mirem als mocks legals
+  const legalBySlug = LEGAL_MOCK_CONTENT[slug]
+  if (legalBySlug) {
+    const legalLocalized =
+      legalBySlug[locale] ?? legalBySlug['ca'] ?? null
+
+    if (legalLocalized) {
+      return {
+        slug,
+        title: legalLocalized.title,
+        body: legalLocalized.body,
+      }
+    }
+  }
+
+  // 2) Després, mirem als mocks generals
+  const blockBySlug = MOCK_CONTENT[slug]
+  if (blockBySlug) {
+    const localized =
+      blockBySlug[locale] ?? blockBySlug['ca'] ?? null
+
+    if (localized) {
+      return {
+        slug,
+        title: localized.title,
+        body: localized.body,
+      }
+    }
+  }
+
+  // console.warn(
+  //   `⚠️ CONTENTFUL MOCK: cap contingut trobat per slug="${slug}", locale="${locale}".`,
+  // )
+  return null
 }

@@ -3,7 +3,6 @@
 import { defineNuxtConfig } from 'nuxt/config'
 import path from 'path';
 
-
 const isDev = process.env.NODE_ENV === "development";
 
 export default defineNuxtConfig({
@@ -12,7 +11,15 @@ export default defineNuxtConfig({
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Nunito:wght@400;700&display=swap' }
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Nunito:wght@400;700&display=swap' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
+      ], 
+      script: [
+        {
+          src: 'https://gc.zgo.at/count.js',
+          async: true,
+          'data-goatcounter': 'https://tu-compte.goatcounter.com/count',
+        }
       ]
     }
   },
@@ -24,9 +31,7 @@ export default defineNuxtConfig({
     host: '0.0.0.0'
   },
   devtools: { enabled: false },
-  typescript: {
-    strict: true 
-  },
+
   css: [
     "@/assets/css/tokens.css",
     "@/assets/css/theme.base.css",
@@ -39,43 +44,52 @@ export default defineNuxtConfig({
       : []), 
     "@/assets/css/main.css",
   ],
+  experimental: {
+    payloadExtraction: false,
+  },
+  i18n: {
+      defaultLocale: 'ca',
+      locales: [
+          { code: 'ca', file: 'ca.json' },
+          { code: 'es', file: 'es.json' },
+          { code: 'en', file: 'en.json' },
+      ],
+      langDir: 'locales',
+      strategy: 'prefix_except_default',
+      detectBrowserLanguage: false,
+  },
+  
   nitro: {
     preset: 'node-server' ,
     compatibilityDate: '2025-11-18',
   },
 
-  modules: ['@nuxtjs/i18n'], // <-- HABILITAR MÓDULO
-  i18n: {
-    locales: [ // Definición de locales (rutas /es/, /en/)
-      { code: 'ca', file: 'ca.json' },
-      { code: 'es', file: 'es.json' },
-      { code: 'en', file: 'en.json' }
-    ],
-    lazy: true,
-    langDir: 'locales', // Directori donde se almacenan los ficheros de traducción
-    defaultLocale: 'ca', // Idioma por defecto
-    strategy: 'prefix_except_default', // Estrategia de URL: /en/page (pero /page per catala)
+  modules: [
+    '@nuxt/content',
+    '@nuxtjs/i18n'
+  ], 
 
-    detectBrowserLanguage: false
-  } ,
   runtimeConfig: {
     public: {
       mockCdnBaseUrl:
         process.env.NUXT_PUBLIC_MOCK_CDN_BASE_URL ||
         'https://develmts.github.io/dev-cdn/',
-        // contact data
-        contactAddress: process.env.NUXT_PUBLIC_CONTACT_ADDRESS,
-        contactCity: process.env.NUXT_PUBLIC_CONTACT_CITY,
-        contactPhone: process.env.NUXT_PUBLIC_CONTACT_PHONE,
-        contactEmail: process.env.NUXT_PUBLIC_CONTACT_EMAIL,
-        contactHours: process.env.NUXT_PUBLIC_CONTACT_HOURS,
-        socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM,
-        socialFacebook: process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK,
-        socialTiktok: process.env.NUXT_PUBLIC_SOCIAL_TIKTOK,
-
+      // contact data
+      contactAddress: process.env.NUXT_PUBLIC_CONTACT_ADDRESS,
+      contactCity: process.env.NUXT_PUBLIC_CONTACT_CITY,
+      contactPhone: process.env.NUXT_PUBLIC_CONTACT_PHONE,
+      contactEmail: process.env.NUXT_PUBLIC_CONTACT_EMAIL,
+      contactHours: process.env.NUXT_PUBLIC_CONTACT_HOURS,
+      socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM,
+      socialFacebook: process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK,
+      socialTiktok: process.env.NUXT_PUBLIC_SOCIAL_TIKTOK,
+      cmsSource:  process.env.NUXT_PUBLIC_CMS_SOURCE || 'content'
     },
   },  
   srcDir: 'src/',
+  typescript: {
+    strict: true 
+  },
   // Configuración Vite para HMR en desarrollo local
   vite: {
     define: {

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { type Locale } from '~/services/shopify'
-import { getContentBySlug } from '~/services/contentful';
+import { getCmsPage } from '~/services/cms';
 
 const { locale, t } = useI18n();
 
 // Carreguem el bloc "about-page" del CMS mock
 const { data: block, pending, error } = useAsyncData(
   `about-page-${locale.value}`,
-  () => getContentBySlug('about-page', locale.value as Locale)
+  () => getCmsPage('about-page', locale.value as Locale)
 );
 
 // SEO
@@ -28,7 +28,7 @@ useSeoMeta({
 
         <!-- Loading -->
         <div v-if="pending" class="loading-block">
-          {{ t('loading', 'Carregant…') }}
+          {{ "t('sections.loading')" }}
         </div>
 
         <!-- Error -->

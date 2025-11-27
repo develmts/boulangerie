@@ -1,5 +1,6 @@
 // src/services/shopify.ts
-import  {createCdnHelper } from '~/utils/cdn';
+import { createCdnHelper } from '~/utils/cdn';
+
 /* --------------------------------------------------------------------------
  * SHOPIFY MODE (mock vs real)
  * -------------------------------------------------------------------------- */
@@ -17,13 +18,16 @@ export type Locale = 'ca' | 'es' | 'en';
  * SHOPIFY PURE MODEL (Storefront API PRODUCT)
  * -------------------------------------------------------------------------- */
 
+/**
+ * Model "baix nivell" proper al que retornaria Shopify Storefront.
+ * Aquest és el tipus canònic intern de producte.
+ */
 export interface ProductImage {
   url: string;
   altText?: string | null;
   width?: number | null;
   height?: number | null;
 }
-
 export interface ShopifyProduct {
   id: string;
   handle: string;
@@ -34,7 +38,24 @@ export interface ShopifyProduct {
   priceMin: number;
   priceMax: number;
   availableForSale: boolean;
+  category: string;
 }
+
+/**
+ * Model simplificat per a la UI (llistes, targetes, etc.)
+ * Deriva de ShopifyProduct via mapping (veure listStorefrontProducts).
+ */
+export type StorefrontProduct = {
+  id: string;
+  handle: string;
+  title: string;
+  description: string;
+  price: string;
+  imageUrl: string;
+  badge?: string;
+  isFeatured?: boolean;
+  category?: string;
+};
 
 /* --------------------------------------------------------------------------
  * IMAGE HELPERS (REAL vs MOCK)
@@ -57,16 +78,10 @@ function getImageUrl(
 
 // Mock — URL absolut LOCAL → coherent amb format Shopify
 function mockImageUrl(slug: string, alt?: string): ProductImage {
-  // IMPORTANT: useRuntimeConfig només s'ha de cridar dins de funcions,
-  // no al top-level del mòdul.
-  // const config = useRuntimeConfig();
-  // const project="boulangeire"
-  // const base = config.public.mockCdnBaseUrl+project+"/"; // ex: https://develmts.github.io/ + "boulangerie +'/'
-  const cdn= createCdnHelper('https://develmts.github.io/dev-cdn/projects').cdnFor;
+  const cdn = createCdnHelper('https://develmts.github.io/dev-cdn/projects').cdnFor;
 
   return {
-    // url: `${base}products/${slug}.png`, // URL ABSOLUTA SIMULADA
-    url: cdn('boulangerie',`products/${slug}.png`), // URL ABSOLUTA SIMULADA
+    url: cdn('boulangerie', `products/${slug}.png`), // URL ABSOLUTA SIMULADA
     altText: alt ?? slug,
     width: null,
     height: null,
@@ -130,6 +145,7 @@ function getMockProducts(locale: Locale): ShopifyProduct[] {
       priceMin: 1.2,
       priceMax: 1.2,
       availableForSale: true,
+      category: "bread"
     },
     {
       id: 'gid://shopify/Product/2',
@@ -141,6 +157,7 @@ function getMockProducts(locale: Locale): ShopifyProduct[] {
       priceMin: 1.4,
       priceMax: 1.4,
       availableForSale: true,
+      category: "pastry"
     },
     {
       id: 'gid://shopify/Product/3',
@@ -152,6 +169,7 @@ function getMockProducts(locale: Locale): ShopifyProduct[] {
       priceMin: 1.6,
       priceMax: 1.6,
       availableForSale: true,
+      category: "pastry"
     },
   ];
 
@@ -160,8 +178,7 @@ function getMockProducts(locale: Locale): ShopifyProduct[] {
     const titleMap = MOCK_TITLES[p.handle];
     const descMap = MOCK_DESCRIPTIONS[p.handle];
 
-    const localizedTitle =
-      titleMap?.[locale] ?? titleMap?.ca ?? p.title;
+    const localizedTitle = titleMap?.[locale] ?? titleMap?.ca ?? p.title;
 
     const localizedDescription =
       descMap?.[locale] ?? descMap?.ca ?? p.description;
@@ -203,34 +220,6 @@ async function RealGetProductByHandle(
   locale: Locale,
 ): Promise<ShopifyProduct | null> {
   // TODO: fer crida real GraphQL a Shopify, amb @inContext(language: locale)
-  //
-  // Exemple de mapping:
-  //
-  // const data = await shopifyGraphQL<ProductQuery>(...)
-  // const p = data.product
-  // if (!p) return null
-  //
-  // return {
-  //   id: p.id,
-  //   handle: p.handle,
-  //   title: p.title,
-  //   description: p.description,
-  //   featuredImage: p.featuredImage
-  //     ? getImageUrl(
-  //         p.featuredImage.url,
-  //         p.featuredImage.altText,
-  //         p.featuredImage.width,
-  //         p.featuredImage.height,
-  //       )
-  //     : null,
-  //   images: p.images.nodes.map(img =>
-  //     getImageUrl(img.url, img.altText, img.width, img.height)
-  //   ),
-  //   priceMin: parseFloat(p.priceRange.minVariantPrice.amount),
-  //   priceMax: parseFloat(p.priceRange.maxVariantPrice.amount),
-  //   availableForSale: p.availableForSale,
-  // }
-
   return null;
 }
 
@@ -239,7 +228,6 @@ async function RealGetAllProducts(
   locale: Locale,
 ): Promise<ShopifyProduct[]> {
   // TODO: crida real GraphQL a Shopify (products(first: limit, ...))
-  // i mapar resposta -> ShopifyProduct[]
   return [];
 }
 
@@ -247,6 +235,9 @@ async function RealGetAllProducts(
  * PUBLIC PRODUCT API (stable, usada per la UI)
  * -------------------------------------------------------------------------- */
 
+/**
+ * API "canònica" per obtenir un producte cru (ShopifyProduct).
+ */
 export async function getProductByHandle(
   handle: string,
   locale: Locale = 'ca',
@@ -256,6 +247,9 @@ export async function getProductByHandle(
     : RealGetProductByHandle(handle, locale);
 }
 
+/**
+ * API "canònica" per obtenir llistes de productes crus (ShopifyProduct[]).
+ */
 export async function getProducts(
   limit: number = 20,
   locale: Locale = 'ca',
@@ -263,6 +257,34 @@ export async function getProducts(
   return SHOPIFY_MODE === 'mock'
     ? MockGetAllProducts(limit, locale)
     : RealGetAllProducts(limit, locale);
+}
+
+/* --------------------------------------------------------------------------
+ * VIEW-MODEL PER A LA UI (StorefrontProduct)
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Helper per a la UI: mapeja ShopifyProduct -> StorefrontProduct
+ * Reutilitza getProducts, així no dupliquem lògica mock/real.
+ */
+export async function listStorefrontProducts(
+  locale: Locale,
+  limit: number = 20,
+): Promise<StorefrontProduct[]> {
+  // Reutilitzem la capa canònica
+  const raw = await getProducts(limit, locale);
+
+  return raw.map((p) => ({
+    id: p.id,
+    handle: p.handle,
+    title: p.title,
+    description: p.description,
+    price: p.priceMin.toFixed(2) + ' €',
+    imageUrl: p.featuredImage ? p.featuredImage.url : '',
+    badge: p.availableForSale ? undefined : 'Out of stock',
+    isFeatured: false,
+    category: p.category,
+  }));
 }
 
 /* --------------------------------------------------------------------------
@@ -425,3 +447,5 @@ export async function addToCart(
   await addCartLines([{ productId, quantity }]);
   return true;
 }
+
+

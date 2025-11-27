@@ -8,10 +8,11 @@ import {
   type Locale 
 } from '~/services/shopify';
 
-import { getContentBySlug, type ContentBlock } from '~/services/contentful';
+import { getCmsPage, type ContentBlock } from '~/services/cms';
 import ProductCard from '~/components/ProductCard.vue';
 import HeroSection from '~/components/HeroSection.vue';
-import { useCdn } from '~/composable/useCdn';
+import { useCdn } from '~/composables/useCdn';
+import ActionFeedback from '~/components/ActionFeedback.vue';
 
 
 definePageMeta({
@@ -37,7 +38,7 @@ const loadData = async (currentLocale: Locale) => {
 
   try {
     const [content, prods] = await Promise.all([
-      getContentBySlug('homepage-hero', currentLocale),
+      getCmsPage('homepage-hero', currentLocale),
       getProducts(3, currentLocale)   // <-- ja retorna ShopifyProduct[]
     ]);
     // const prods = await getProducts(3, currentLocale);
@@ -49,6 +50,7 @@ const loadData = async (currentLocale: Locale) => {
   } finally {
     loading.value = false;
   }
+
 };
 
 // Carga inicial + recàrrega per canvi d'idioma
@@ -61,8 +63,16 @@ watch(locale, (newLocale) => loadData(newLocale as Locale));
   <div class="maqueta-container">
 
     <!-- LOADING -->
-    <div v-if="loading" class="loading-message">
-      {{ t('sections.loading') }}
+    <div v-if="loading" class="loading-loader">
+      <ActionFeedback
+        mode="text"
+        svgSrc="/assets/images/logo.svg"
+        text-variant="reveal"
+        :size="128"
+        :text="t('sections.loading')"
+        :loop="true"
+      /> 
+     
     </div>
 
     <div v-else>
@@ -130,6 +140,7 @@ header {
   padding-bottom: 20px;
   border-bottom: 2px solid var(--color-accent);
 }
+
 .switcher-fixed {
   position: absolute;
   top: 20px;
@@ -159,4 +170,11 @@ header {
   border: 1px dashed var(--color-border-subtle);
   border-radius: 5px;
 }
+
+.loading-loader {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
 </style>

@@ -1,7 +1,7 @@
 <!-- src/pages/cookies.vue -->
 <script setup lang="ts">
 import { type Locale } from '~/services/shopify'
-import { getContentBySlug, type ContentBlock } from '~/services/contentful'
+import { type CmsPage , getCmsPage} from '~/services/cms/'
 
 definePageMeta({
   layout: 'default',
@@ -10,14 +10,15 @@ definePageMeta({
 const { t, locale } = useI18n()
 
 const loading = ref(true)
-const content = ref<ContentBlock | null>(null)
+const content = ref<CmsPage | null>(null)
 
-const slug = 'legal-cookies-policy'
+const slug = 'cookies'
 
 async function loadData(currentLocale: Locale) {
   loading.value = true
   try {
-    const block = await getContentBySlug(slug, currentLocale)
+    const block = await getCmsPage(slug, currentLocale)
+    // console.log("got content for",slug, locale.value, block?.nuxtContentDoc)
     content.value = block
   } catch (err) {
     console.error('Error carregant Política de cookies:', err)
@@ -39,16 +40,25 @@ watch(locale, newLocale => {
 <template>
   <div class="maqueta-container legal-page">
     <div v-if="loading" class="loading-message">
-      {{ t('sections.loading') }}
+      <!-- {{ t('sections.loading') }} -->
+      <ActionFeedback 
+        mode="text"
+        text-variant="reveal"
+        :size="128"
+        :text="t('sections.loading')"
+        :loop="true"
+      />         
     </div>
 
     <div v-else>
       <section v-if="content" class="legal-section">
-        <h1 class="legal-title">
-          {{ content.title }}
-        </h1>
+        <div class="blog-content">
+          <h1 class="blog-title">{{ content?.title }}</h1>
 
-        <article class="legal-body" v-html="content.body" />
+          <article class="blog-body">
+            <CmsRichText v-if="content" :block="content"></CmsRichText>
+          </article>
+        </div>
       </section>
 
       <section v-else class="legal-section">

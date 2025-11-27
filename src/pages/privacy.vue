@@ -1,7 +1,7 @@
 <!-- src/pages/privacy.vue -->
 <script setup lang="ts">
 import { type Locale } from '~/services/shopify'
-import { getContentBySlug, type ContentBlock } from '~/services/contentful'
+import { type CmsPage , getCmsPage} from '~/services/cms/'
 
 definePageMeta({
   layout: 'default',
@@ -10,14 +10,14 @@ definePageMeta({
 const { t, locale } = useI18n()
 
 const loading = ref(true)
-const content = ref<ContentBlock | null>(null)
+const content = ref<CmsPage | null>(null)
 
-const slug = 'legal-privacy-policy'
+const slug = 'privacy-policy'
 
 async function loadData(currentLocale: Locale) {
   loading.value = true
   try {
-    const block = await getContentBySlug(slug, currentLocale)
+    const block = await getCmsPage(slug, currentLocale)
     content.value = block
   } catch (err) {
     console.error('Error carregant Política de privacitat:', err)
@@ -48,20 +48,20 @@ watch(locale, newLocale => {
           {{ content.title }}
         </h1>
 
-        <!-- Si el ContentBlock té camp "updatedAt" o similar, el podries mostrar aquí -->
-        <!-- <p class="legal-updated">{{ t('legal.last_updated') }}: {{ content.updatedAt }}</p> -->
-
-        <article class="legal-body" v-html="content.body" />
+        <article class="legal-body legal-body--cms">
+          <CmsRichText :block="content" />
+        </article>
       </section>
 
       <section v-else class="legal-section">
         <h1 class="legal-title">
-          {{ t('legal.privacy_fallback_title', 'Política de privacitat') }}
+          {{ t('privacy_fallback_title', 'Política de privacitat') }}
         </h1>
         <p class="legal-body">
-          {{ t('legal.privacy_fallback_body', 'El contingut de la política de privacitat no està disponible en aquests moments.') }}
+          {{ t('privacy_fallback_body', 'El contingut de la política de privacitat no està disponible en aquests moments.') }}
         </p>
       </section>
+
     </div>
   </div>
 </template>

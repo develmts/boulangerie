@@ -99,7 +99,8 @@ function closeMenu() {
   */
     
   backdrop-filter: blur(6px);
-  background: color-mix(in srgb, var(-color--surface) 75%, transparent);
+  /* background: color-mix(in srgb, var(-color--surface) 75%, transparent); */
+  background: var(--color-surface);
 
 }
 
@@ -130,7 +131,8 @@ function closeMenu() {
     */
       
     backdrop-filter: blur(6px);
-    background: color-mix(in srgb, var(-color--surface) 75%, transparent);
+    /* background: color-mix(in srgb, var(-color--surface) 75%, transparent); */
+    background: var(-color--surface); 
     /* box-shadow: 4px 0 12px var(--shadow-soft); */
     padding: 1.25rem 1.5rem;
     z-index: 55;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { type Locale } from '~/services/shopify'
-import { getContentBySlug } from '~/services/contentful';
+import { getCmsPage } from '~/services/cms';
 
 const { locale, t } = useI18n();
 const route = useRoute();
@@ -8,7 +8,7 @@ const route = useRoute();
 // Carreguem contingut del CMS mock
 const { data: block, pending, error } = useAsyncData(
   `blog-${locale.value}`,
-  () => getContentBySlug('blog', locale.value as Locale )
+  () => getCmsPage('blog', locale.value as Locale )
 );
 
 // SEO
@@ -26,22 +26,27 @@ useSeoMeta({
       <div class="blog-container">
         <!-- Loading -->
         <div v-if="pending" class="loading-block">
-          {{ t('loading', 'Carregant…') }}
+          <ActionFeedback 
+            mode="text"
+            text-variant="reveal"
+            :size="128"
+            :text="t('sections.loading')"
+            :loop="true"
+          /> 
         </div>
 
         <!-- Error -->
         <div v-else-if="error" class="error-block">
-          {{ t('errors.contentNotFound', 'No s’ha pogut carregar el contingut.') }}
+          {{ t('errors.contentNotFound') }}
         </div>
 
         <!-- Contingut -->
         <div v-else class="blog-content">
           <h1 class="blog-title">{{ block?.title }}</h1>
 
-          <article
-            class="blog-body"
-            v-html="block?.body"
-          />
+          <article class="blog-body">
+            <CmsRichText v-if="block" :block="block"></CmsRichText>
+          </article>
         </div>
       </div>
     </section>

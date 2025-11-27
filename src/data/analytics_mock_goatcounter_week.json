@@ -1,0 +1,93 @@
+[
+  {
+    "date": "2025-11-19",
+    "total": 311,
+    "pages": {
+      "/": 78,
+      "/about": 34,
+      "/products": 48,
+      "/products/baguette": 23,
+      "/products/croissant": 37,
+      "/blog": 71,
+      "/contact": 20
+    }
+  },
+  {
+    "date": "2025-11-20",
+    "total": 305,
+    "pages": {
+      "/": 71,
+      "/about": 24,
+      "/products": 42,
+      "/products/baguette": 27,
+      "/products/croissant": 32,
+      "/blog": 71,
+      "/contact": 38
+    }
+  },
+  {
+    "date": "2025-11-21",
+    "total": 365,
+    "pages": {
+      "/": 98,
+      "/about": 33,
+      "/products": 51,
+      "/products/baguette": 35,
+      "/products/croissant": 34,
+      "/blog": 68,
+      "/contact": 46
+    }
+  },
+  {
+    "date": "2025-11-22",
+    "total": 244,
+    "pages": {
+      "/": 58,
+      "/about": 21,
+      "/products": 41,
+      "/products/baguette": 23,
+      "/products/croissant": 25,
+      "/blog": 58,
+      "/contact": 18
+    }
+  },
+  {
+    "date": "2025-11-23",
+    "total": 234,
+    "pages": {
+      "/": 60,
+      "/about": 30,
+      "/products": 41,
+      "/products/baguette": 25,
+      "/products/croissant": 16,
+      "/blog": 37,
+      "/contact": 25
+    }
+  },
+  {
+    "date": "2025-11-24",
+    "total": 236,
+    "pages": {
+      "/": 60,
+      "/about": 24,
+      "/products": 39,
+      "/products/baguette": 24,
+      "/products/croissant": 25,
+      "/blog": 42,
+      "/contact": 22
+    }
+  },
+  {
+    "date": "2025-11-25",
+    "total": 350,
+    "pages": {
+      "/": 99,
+      "/about": 31,
+      "/products": 56,
+      "/products/baguette": 39,
+      "/products/croissant": 26,
+      "/blog": 61,
+      "/contact": 38
+    }
+  }
+]

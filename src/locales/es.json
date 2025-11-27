@@ -12,13 +12,19 @@
     "about": "Somos así",
     "privacy": "Privacidad",
     "legal": "Aviso legal",
-    "cookies": "Cookies"    
+    "cookies": "Cookies",    
+    "faq": "Preguntas frecuentes",
+    "blog": "Blog",
+    "account": "Cuenta",
+    "cart": "Cesta",
+    "login": "Inicia sesión"
   },
   "product": {
     "heading": "Nuestros Destacados del Día",
     "add_to_cart": "Añadir al Carrito",
     "adding": "Añadiendo...",
-    "unavailable": "No Disponible"
+    "unavailable": "No Disponible",
+    "added": "añadido"
   },
   "cta": {
     "view_products": "Ver Nuestros Productos"
@@ -26,6 +32,15 @@
   "sections": {
     "phase_2_title": "Gestión de la Presencia Online (Fase II)",
     "loading": "Cargando Maqueta Headless. Por favor, espere..."
+  },
+    "home": {
+    "hero": {
+      "title": "Pastisseria Piella",
+      "subtitle": "Artesania dulce  hecha cada día en nuestro obrador. Croissants, cocas y pasteles elaborados con recetas propias e ingredientes de calidad.",
+      "primaryCta": "Ver productos",
+      "secondaryCta": "Contactar",
+      "imageAlt": "Productos artesanos de la Pastisseria Piella"
+    }
   },
   "contact": {
     "metaTitle": "Contacto",
@@ -72,6 +87,101 @@
   },
   "about": {
     "metaDescription": "Tradición, tiempo y oficio: la historia y forma de trabajar de la pastelería."
-  }
+  },
+  "shop": {
+    "title": "Tienda",
+    "subtitle": "Productos artesanos hechos cada día",
 
+    "loading": "Cargando productos...",
+    "error_loading": "No se ha podido cargar la lista de productos",
+
+    "cart": {
+      "label": "Cesta"
+    },
+
+    "user": {
+      "greetingShort": "Cuenta",
+      "menu": {
+        "title": "Mi cuenta",
+        "signin": "Iniciar sesión",
+        "orders": "Pedidos",
+        "favorites": "Favoritos",
+        "settings": "Configuración",
+        "logout": "Cerrar sesión"
+      }
+    },
+
+    "filters": {
+      "categoryLabel": "Categoría",
+      "categoryAll": "Todas",
+      "categoryBread": "Pan",
+      "categoryPastries": "Bollería",
+      "categoryCakes": "Pastelería",
+
+      "sortLabel": "Ordenar",
+      "sortDefault": "Por defecto",
+      "sortPriceAsc": "Precio: más barato primero",
+      "sortPriceDesc": "Precio: más caro primero",
+
+      "resultsSuffix": "resultados"
+    }
+  },
+  "userMenu": {
+    "loginOrAccount": "Inicia sesión o accede a tu cuenta",
+    "orders": "Mis pedidos",
+    "contact": "Contacto",
+    "about": "Sobre nosotros"
+  },
+  "analytics": {
+    "title": "Análisis de visitas",
+    "selectPeriod": "Selecciona período",
+    "period": {
+      "today": "Hoy",
+      "week": "Última semana",
+      "custom": "Personalizado"
+    },
+    "topPages": "Top 5 páginas más vistas ({period})",
+    "visitsOverTime": "Distribución de visitas",
+    "chartTitleTopPages": "Páginas más vistas",
+    "chartTitleVisitsOverTime": "Visitas por día",
+    "seriesTotalVisits": "Visitas totales",
+    "rawTotals": "Totales por día",
+    "views": "{count} visitas"
+  },
+  "cookies": {
+    "banner": {
+      "title": "Este sitio web utiliza cookies",
+      "text": "Usamos cookies para mejorar tu experiencia, analizar el uso del sitio y mostrar contenido personalizado. Puedes aceptar todas las cookies o configurar tus preferencias.",
+      "acceptAll": "Aceptar todas",
+      "denyAll": "Rechazar todas",
+      "customize": "Personalizar"
+    },
+
+    "settings": {
+      "title": "Configuración de cookies",
+      "intro": "Selecciona qué categorías de cookies deseas permitir. Puedes cambiarlas en cualquier momento.",
+      "save": "Guardar configuración",
+
+      "necessary": {
+        "title": "Cookies necesarias",
+        "description": "Esenciales para el funcionamiento del sitio y no pueden desactivarse.",
+        "badge": "Obligatorias"
+      },
+
+      "preferences": {
+        "title": "Preferencias",
+        "description": "Guardan información como el idioma preferido o configuraciones personalizadas."
+      },
+
+      "analytics": {
+        "title": "Analíticas",
+        "description": "Nos ayudan a comprender cómo se utiliza el sitio para mejorar la experiencia."
+      },
+
+      "marketing": {
+        "title": "Publicidad",
+        "description": "Se usan para mostrar anuncios personalizados basados en tu perfil de navegación."
+      }
+    }
+  }
 }

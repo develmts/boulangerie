@@ -54,7 +54,8 @@ a:hover {
   padding: 0.7rem 1.4rem;
   border: none;
   cursor: pointer;
-  font-family: var(--font-body);
+  font: var(--font-button);
+  /* font-family: var(--font-body); */
   transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -74,7 +75,8 @@ a:hover {
 .cta-button {
   background-color: var(--color-accent);
   color: white;
-  font-family: var(--font-button);
+  font: var(--font-button);
+  /* font-family: var(--font-button); */
   font-weight: 700;
   border: none;
   padding: 12px 24px;

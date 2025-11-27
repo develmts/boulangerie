@@ -2,6 +2,13 @@
 const config = useRuntimeConfig();
 const { t } = useI18n();
 
+import { reactive, ref } from 'vue'
+import {
+  validateContactForm,
+  type ContactFormData,
+  type ContactValidationErrors,
+} from '~/utils/contactValidation'
+
 useSeoMeta({
   title: () => t('contact.metaTitle') as string,
   ogTitle: () => t('contact.metaTitle') as string,
@@ -111,6 +118,7 @@ const email = ref('');
 const message = ref('');
 const isSubmitting = ref(false);
 const submitted = ref(false);
+
 
 const handleSubmit = async () => {
   isSubmitting.value = true;
@@ -234,10 +242,11 @@ const handleSubmit = async () => {
         </div>
 
         <!-- COL·UMNA DRETA (FORMULARI) -->
+
         <div class="contact-column contact-column--form">
           <div class="contact-card contact-card--form">
             <h2 class="card-title">{{ t('contact.formTitle') }}</h2>
-
+            <!--             
             <form class="contact-form" @submit.prevent="handleSubmit">
               
               <div class="form-row">
@@ -266,9 +275,10 @@ const handleSubmit = async () => {
                 </p>
               </div>
 
-            </form>
+            </form> -->
+            <ContactForm />
           </div>
-        </div>
+        </div> 
 
       </div>
     </div>

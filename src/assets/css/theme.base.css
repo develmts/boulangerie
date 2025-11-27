@@ -43,6 +43,8 @@
   /* Fonts */
   --font-heading: var(--font-headings);
   --font-body: var(--font-default);
+  --font-button : var(--font-headings);
+  --font-button : 600 0.95rem/1.2 "Helvetica Neue", Arial, sans-serif;;
 
   /* Radius + ombres */
   --radius-s: 4px;
