@@ -103,7 +103,9 @@
     "error_loading": "No s'ha pogut carregar la llista de productes",
 
     "cart": {
-      "label": "Cistella"
+      "label": "Cistella",
+      "items": "Coses",
+      "subtotal": "Preu"
     },
 
     "user": {
@@ -125,6 +127,18 @@
       "resultsSuffix": "resultats"
     }
   },
+  
+  "cart": {
+    "label": "Cistella",
+    "items": "Elements",
+    "subtotal": "Preu",
+    "checkout": "Pagar",
+    "checkoutTitle": "Comanda",
+    "isEmpty": "la cistella es buida",
+    "confirm": "D'acord",
+    "noProducts": "Encara no hi ha productes a la cistella"
+  },
+
   "userMenu": {
     "loginOrAccount": "Inicia sessió o accedeix al teu compte",
     "orders": "Les meves comandes",

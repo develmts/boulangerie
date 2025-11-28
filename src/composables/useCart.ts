@@ -1,13 +1,17 @@
 // src/composables/useCart.ts
-import { ref } from 'vue'
+import { ref , computed} from 'vue'
 import {
+  getProducts,
   addCartLines,
   clearCart as apiClearCart,
   getCart as apiGetCart,
   updateCartLineQuantity,
   removeCartLine,
   type Cart,
+  Locale,
 } from '~/services/shopify'
+
+const products = await getProducts(undefined, 'ca' as Locale)   // Mock
 
 // ✅ Estat compartit entre tots els components
 const cart = ref<Cart | null>(null)
@@ -37,6 +41,37 @@ export function useCart() {
   if (!cart.value && !isLoading.value) {
     refreshCart()
   }
+
+  const productsById = computed(() => {
+    const map = new Map<string, { title: string; price: number }>()
+    for (const p of products) {   // on allProducts ve del mock o de Shopify
+      map.set(p.id, { title: p.title, price:  p.priceMin })
+    }
+    return map
+  })
+
+  const enrichedLines = computed(() =>
+    cart.value?.lines.map((line) => {
+
+      const info = productsById.value.get(line.productId) 
+      return {
+        ...line,
+        productTitle: info?.title ?? line.productId,
+        unitPrice: info?.price ?? 0,
+        lineTotal: (info?.price ?? 0) * line.quantity,
+      }
+    }),
+  )
+
+  const cartSubtotal = computed(() =>
+    enrichedLines.value?.reduce((sum, line) => sum + line.lineTotal, 0),
+  )
+
+  const cartTotalQuantity = computed(() =>
+    enrichedLines.value?.reduce((sum, line) => sum + line.quantity, 0),
+  )
+
+
 
   async function addItem(productId: string, quantity = 1) {
     isLoading.value = true
@@ -79,6 +114,12 @@ export function useCart() {
     addItem,
     updateItem,
     removeItem,
+    enrichedLines,
+    cartSubtotal,
+    cartTotalQuantity,
     clearCart,
   }
 }
+
+
+

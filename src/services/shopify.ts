@@ -6,8 +6,9 @@ import { createCdnHelper } from '~/utils/cdn';
  * -------------------------------------------------------------------------- */
 
 const SHOPIFY_MODE: 'mock' | 'real' =  process.env.SHOPIFY_MODE == 'real' ? 'real' : 'mock'
-  //process.env.NODE_ENV === 'production' ? 'real' : 'mock';
-console.log("Mode" , SHOPIFY_MODE)
+
+// process.env.NODE_ENV === 'production' ? 'real' : 'mock';
+
 /* --------------------------------------------------------------------------
  * LOCALES
  * -------------------------------------------------------------------------- */

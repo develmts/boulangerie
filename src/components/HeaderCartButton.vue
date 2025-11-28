@@ -58,7 +58,7 @@ const showBadge = computed(() => {
       />
     </div>
     <span class="icon-label">
-      {{ t('shop.cart.label') }}
+      {{ t('cart.label') }}
     </span>
   </button>
 </template>

@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useCart } from '~/composables/useCart'
-
+const { t } = useI18n()
 const {
   cart,
   isCartOpen,
@@ -11,14 +11,26 @@ const {
   updateItem,
   removeItem,
   clearCart,
+  enrichedLines,
+  cartTotalQuantity,
+  cartSubtotal
 } = useCart()
 
 const hasItems = computed(() => (cart.value?.lines.length ?? 0) > 0)
+
+const localePath = useLocalePath()
+
+const isCartReviewOpen = ref(false)
+
+
+function goToCheckout() {
+  closeCart()
+  isCartReviewOpen.value = true
+}
 </script>
 
 <template>
   <transition name="mini-cart-fade">
-    <!-- Overlay de pantalla sencera amb blur, només si la cistella és oberta -->
     <div
       v-if="isCartOpen"
       class="mini-cart-overlay"
@@ -27,7 +39,7 @@ const hasItems = computed(() => (cart.value?.lines.length ?? 0) > 0)
     >
       <aside class="mini-cart" aria-label="Shopping cart">
         <header class="mini-cart__header">
-          <h2 class="mini-cart__title">Cistella</h2>
+          <h2 class="mini-cart__title">{{ t('cart.label') }}</h2>
           <button
             type="button"
             class="mini-cart__close"
@@ -42,47 +54,61 @@ const hasItems = computed(() => (cart.value?.lines.length ?? 0) > 0)
           <p v-if="isLoading">Actualitzant cistella...</p>
 
           <p v-else-if="!hasItems">
-            Encara no hi ha productes a la cistella.
+            {{ t('cart.noProducts') }}
+           
           </p>
 
           <ul v-else class="mini-cart__list">
             <li
-              v-for="line in cart?.lines"
+              v-for="line in enrichedLines"
               :key="line.id"
               class="mini-cart__item"
             >
               <div class="mini-cart__info">
-                <!-- Mock: només productId; més endavant mapejarem a producte complet -->
                 <div class="mini-cart__name">
-                  {{ line.productId }}
+                  {{ line.productTitle }}
                 </div>
                 <div class="mini-cart__qty">
-                  <label>
-                    Q:
-                    <input
-                      type="number"
-                      min="1"
-                      :value="line.quantity"
-                      @change="updateItem(
-                        line.id,
-                        Number(($event.target as HTMLInputElement).value) || 1
-                      )"
-                    />
-                  </label>
+                  {{ line.quantity }}
+                  <span v-if="line.unitPrice">
+                    · {{ line.unitPrice.toFixed(2) }} €
+                  </span>
+                </div>
+                <div class="mini-cart__linrTotal">
+                  {{ (line.quantity * line.unitPrice).toFixed(2) }} €
                 </div>
               </div>
+              <!-- CANVI: abans era cart-line-remove -->
               <button
                 type="button"
-                class="mini-cart__remove"
+                class="mini-cart__remove" 
                 @click="removeItem(line.id)"
               >
-                X
+                ✕
               </button>
             </li>
           </ul>
+
+          <div class="mini-cart-summary" v-if="enrichedLines?.length">
+            <div class="mini-cart-summary-row">
+              <span>{{ t('cart.items') }}</span>
+              <span>{{ cartTotalQuantity }}</span>
+            </div>
+            <div class="mini-cart-summary-row">
+              <span>{{ t('cart.subtotal') }}</span>
+              <span>{{ cartSubtotal?.toFixed(2) }} €</span>
+            </div>
+          </div>
         </div>
 
         <footer class="mini-cart__footer" v-if="hasItems">
+          <button
+            type="button"
+            class="mini-cart__checkout"
+            @click="goToCheckout"
+          >
+            {{ t('cart.checkout') }}
+          </button>
           <button type="button" class="mini-cart__clear" @click="clearCart">
             Buidar cistella
           </button>
@@ -90,6 +116,11 @@ const hasItems = computed(() => (cart.value?.lines.length ?? 0) > 0)
       </aside>
     </div>
   </transition>
+  <!-- Overlay global, fora del drawer -->
+  <CartReviewOverlay
+    :open="isCartReviewOpen"
+    @close="isCartReviewOpen = false"
+  />
 </template>
 
 <style scoped>
@@ -98,17 +129,17 @@ const hasItems = computed(() => (cart.value?.lines.length ?? 0) > 0)
   position: fixed;
   inset: 0;
   z-index: 12000;
-  background: rgba(0, 0, 0, 0.25);      /* enfosqueix */
-  backdrop-filter: blur(6px);           /* BLUR del que hi ha sota */
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(6px);
   display: flex;
-  justify-content: flex-end;            /* desktop: enganxat a la dreta */
-  align-items: flex-start;              /* enganxat a dalt */
-  padding: 0.75rem;                     /* separació de les vores */
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 0.75rem;
 }
 
 /* Panell de cistella */
 .mini-cart {
-  width: min(380px, 100vw - 1.5rem);    /* proporcional al viewport */
+  width: min(380px, 100vw - 1.5rem);
   max-height: 80vh;
   background: #ffffff;
   border-radius: 16px;
@@ -164,13 +195,45 @@ const hasItems = computed(() => (cart.value?.lines.length ?? 0) > 0)
   background: #faf5ee;
 }
 
+/* INFO: nom + qty + total en una sola línia amb columnes */
+.mini-cart__info {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  column-gap: 0.75rem;
+  align-items: center;
+  flex: 1; /* CANVI: perquè ocupi tot l’ample disponible */
+}
+
 .mini-cart__name {
-  font-weight: 500;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-cart__qty,
+.mini-cart__linrTotal {
+  white-space: nowrap;
+  text-align: right; /* CANVI: números alineats a la dreta */
 }
 
 .mini-cart__qty input {
   width: 3rem;
   font-size: 0.8rem;
+}
+
+/* SUMMARY: correcció del selector */
+.mini-cart-summary {               /* CANVI: abans .min-cart-summary */
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.mini-cart-summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.15rem 0;
 }
 
 /* Botons */
@@ -189,6 +252,25 @@ const hasItems = computed(() => (cart.value?.lines.length ?? 0) > 0)
 
 .mini-cart__clear {
   background: #eee3d3;
+}
+
+.mini-cart__clear:hover {
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.mini-cart__checkout {
+  border-radius: 999px;
+  border: none;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background: #eee3d3;
+}
+
+.mini-cart__checkout:hover {
+  background: var(--color-primary);
+  color: var(--color-surface);
 }
 
 .mini-cart__footer {
@@ -211,14 +293,14 @@ const hasItems = computed(() => (cart.value?.lines.length ?? 0) > 0)
 /* MOBILE: centrat i més estret (max 370px) */
 @media (max-width: 640px) {
   .mini-cart-overlay {
-    justify-content: center;          /* centrat horitzontalment */
+    justify-content: center;
     align-items: flex-start;
     padding-inline: 0.75rem;
   }
 
   .mini-cart {
     width: 100%;
-    max-width: 370px;                 /* límit dur perquè no surti de la pantalla */
+    max-width: 370px;
     max-height: 75vh;
   }
 }
