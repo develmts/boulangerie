@@ -18,7 +18,7 @@ const DEFAULT_STATE: CookieConsentState = {
 }
 
 export function useCookieConsent() {
-  const consent = useCookie<CookieConsentState | null>('cookie-consent-v2', {
+  const consent = useCookie<CookieConsentState | null>('cookie-consent', {
     sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60 * 24 * 365, // 1 any

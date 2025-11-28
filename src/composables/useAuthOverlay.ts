@@ -1,5 +1,5 @@
 // composables/useAuthOverlay.ts
-export type AuthOverlayMode = 'login' | 'account'
+export type AuthOverlayMode = 'login' | 'account' | 'register' 
 
 export function useAuthOverlay() {
   const isOpen = useState<boolean>('auth-overlay-open', () => false)

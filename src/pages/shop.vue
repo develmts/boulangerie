@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import ProductCard from '~/components/ProductCard.vue'
 import ActionFeedback from '~/components/ActionFeedback.vue'
-import UserMenu from '~/components/UserMenu.vue'
+// import UserMenu from '~/components/UserMenu.vue'
 import { getProducts, type ShopifyProduct, type Locale } from '~/services/shopify'
 
 import { useCart } from '~/composables/useCart'
@@ -15,7 +15,7 @@ const loadError = ref<string | null>(null)
 
 const selectedCategory = ref<'all' | 'pa' | 'brioixeria' | 'pastisseria'>('all')
 const sortMode = ref<'default' | 'price-asc' | 'price-desc'>('default')
-const userMenuRef = ref<InstanceType<typeof UserMenu> | null>(null)
+// const userMenuRef = ref<InstanceType<typeof UserMenu> | null>(null)
 // TODO: quan tinguem cart real, substituïm aquests mocks:
 // const cartItemCount = ref(0)
 
@@ -113,41 +113,6 @@ watch(
         </div>
 
         <div class="shop-actions">
-          <!-- Perfil usuari -->
-          <!-- <button type="button" class="icon-button" aria-label="User account">
-            <User class="icon" />
-            <span class="icon-label" v-if="isUserLoggedIn">
-              {{ t('shop.user.greetingShort') }}
-            </span>
-          </button> -->
-          <UserMenu ref="userMenuRef" />
-
-          <!-- <button
-            type="button"
-            class="icon-button"
-            aria-label="User account"
-            @click="userMenuRef?.toggle()"
-          >
-            <User class="icon" />
-            <span class="icon-label">
-              {{ t('shop.user.greetingShort') }}
-            </span>
-          </button> -->
-
-          <!-- Cistella -->
-          <!-- <button type="button" class="icon-button" aria-label="Cart" @click="toggleCart()">
-            <div class="icon-badge-wrapper">
-              <ShoppingCart class="icon" />
-              <CartBadge
-                :count="cartItemCount"
-                :loading="isLoading"
-                :hide-if-zero="false"
-              />
-            </div>
-            <span class="icon-label">
-              {{ t('shop.cart.label') }}
-            </span>
-          </button> -->
         </div>
       </header>
 

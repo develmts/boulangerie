@@ -28,24 +28,27 @@ useSeoMeta({
 
         <!-- Loading -->
         <div v-if="pending" class="loading-block">
-          {{ "t('sections.loading')" }}
+          <ActionFeedback 
+            mode="text"
+            text-variant="reveal"
+            :size="128"
+            :text="t('sections.loading')"
+            :loop="true"
+          />         
         </div>
-
         <!-- Error -->
         <div v-else-if="error" class="error-block">
-          {{ t('errors.contentNotFound', 'No s’ha pogut carregar el contingut.') }}
+          {{ t('errors.contentNotFound') }}
         </div>
 
         <!-- Contingut -->
-        <div v-else class="about-content">
+        <div v-else class="blog-content">
           <h1 class="about-title">{{ block?.title }}</h1>
 
-          <article
-            class="about-body"
-            v-html="block?.body"
-          />
-        </div>
-
+          <article class="about-body">
+            <CmsRichText v-if="block" :block="block"></CmsRichText>
+          </article>
+        </div>        
       </div>
     </section>
   </div>

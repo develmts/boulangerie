@@ -1,7 +1,7 @@
 // src/server/api/auth/me.get.ts
 import { defineEventHandler, getCookie } from 'h3'
 
-const FORCE_MOCK_LOGGED_IN = true
+const FORCE_MOCK_LOGGED_IN = false
 
 const CUSTOMER_COOKIE_NAME = 'shopify_customer_token'
 
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     return {
       loggedIn: true,
       customer: {
-        email: 'demo@example.com',
+        email: 'demo.user@example.com',
         firstName: 'Demo',
         lastName: 'User',
       },

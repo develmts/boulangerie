@@ -3,7 +3,7 @@
 import { defineNuxtConfig } from 'nuxt/config'
 import path from 'path';
 
-const isDev = process.env.NODE_ENV === "development";
+const isDev = true
 
 export default defineNuxtConfig({
   app: {
@@ -83,7 +83,8 @@ export default defineNuxtConfig({
       socialInstagram: process.env.NUXT_PUBLIC_SOCIAL_INSTAGRAM,
       socialFacebook: process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK,
       socialTiktok: process.env.NUXT_PUBLIC_SOCIAL_TIKTOK,
-      cmsSource:  process.env.NUXT_PUBLIC_CMS_SOURCE || 'content'
+      cmsSource:  process.env.NUXT_PUBLIC_CMS_SOURCE || 'content',
+      serverMode: process.env.SERVER_MODE || 'serverless'
     },
   },  
   srcDir: 'src/',

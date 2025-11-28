@@ -27,7 +27,7 @@ const hasItems = computed(() => (cart.value?.lines.length ?? 0) > 0)
     >
       <aside class="mini-cart" aria-label="Shopping cart">
         <header class="mini-cart__header">
-          <h2 class="mini-cart__title">Cistella (mock)</h2>
+          <h2 class="mini-cart__title">Cistella</h2>
           <button
             type="button"
             class="mini-cart__close"

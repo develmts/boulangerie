@@ -5,9 +5,9 @@ import { createCdnHelper } from '~/utils/cdn';
  * SHOPIFY MODE (mock vs real)
  * -------------------------------------------------------------------------- */
 
-const SHOPIFY_MODE: 'mock' | 'real' =
-  process.env.NODE_ENV === 'production' ? 'real' : 'mock';
-
+const SHOPIFY_MODE: 'mock' | 'real' =  process.env.SHOPIFY_MODE == 'real' ? 'real' : 'mock'
+  //process.env.NODE_ENV === 'production' ? 'real' : 'mock';
+console.log("Mode" , SHOPIFY_MODE)
 /* --------------------------------------------------------------------------
  * LOCALES
  * -------------------------------------------------------------------------- */
@@ -361,7 +361,8 @@ export async function getCart(): Promise<Cart> {
     return ensureMockCart();
   }
   // TODO (mode real): cart(id: ...) via Storefront API
-  throw new Error('getCart (real) no implementat encara.');
+  throw new Error('getCart (real) not implemented.');
+
 }
 
 export async function addCartLines(

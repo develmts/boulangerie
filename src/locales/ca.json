@@ -5,6 +5,9 @@
   "footer": {
     "copyright": "Tots els drets reservats."
   },
+  "common": {
+    "back": "Enrere"
+  },
   "nav": {
     "home": "Inici",
     "shop": "Tenda",
@@ -18,6 +21,8 @@
     "account": "Compte",
     "cart": "Cistella",
     "login": "Identifica't",
+    "register": "No tens commpte. Uneix-te",
+    "password": "Clau",
     "logout": "Tanca sessió"
   },
   "product": {
@@ -127,7 +132,11 @@
     "about": "Sobre nosaltres",
     "welcome": "Benvingut, ",
     "profile": "Perfil", 
-    "changePassword": "Canvia la clau"
+    "changePassword": "Canvia la clau",
+    "noAccount" : "Registra't",
+    "haveAccount" : "Identifica't",
+    "roleAdmin": "Administrador",
+    "adminSection": "Seccio privada"
   },
   "analytics": {
     "title": "Anàlisi de visites",
@@ -181,5 +190,10 @@
         "description": "S’utilitzen per mostrar anuncis personalitzats segons el teu perfil de navegació."
       }
     }
+  }, 
+  "admin" :{
+    "analytics": "Analitiques",
+    "orders": "Comandes",
+    "products": "Gestio de productes"
   }
 }

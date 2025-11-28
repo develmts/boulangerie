@@ -8,7 +8,6 @@ export function useAuthUI() {
 
   function openDefault() {
     // decideix automàticament login vs account
-    console.log('[useAuthUI] openDefault called')
     const nextMode = isLoggedIn.value ? 'account' : 'login'
     open(nextMode)
 

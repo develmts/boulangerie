@@ -5,6 +5,7 @@ export type CustomerState = {
   email: string
   firstName: string | null
   lastName: string | null
+  role?: "user" | "admin"
 }
 
 // Resposta de /api/auth/me
@@ -24,6 +25,56 @@ type LoginResponse =
       error: string
       message: string
     }
+
+type RegisterPayload = {
+  email: string
+  password: string
+  firstName?: string
+  lastName?: string
+}    
+
+/**
+ * Mock users Table
+ */
+const Customers: Array<{
+  id: string
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+  role: 'user' | 'admin'
+}> = [
+  {
+    id: "u1",
+    email: "demo.user@piella.demo",
+    password: "demo123",
+    firstName: "Clara",
+    lastName: "Client",
+    role: "user"
+  },
+  {
+    id: "u2",
+    email: "demo.admin@piella.demo",
+    password: "admin123",
+    firstName: "Arnau",
+    lastName: "Admin",
+    role: "admin"
+  },
+  {
+    id: "u3",
+    email: "flequer@piella.demo",
+    password: "paiforn123",
+    firstName: "Marta",
+    lastName: "Flequera",
+    role: "admin"
+  }
+]
+
+const config = useRuntimeConfig()
+const _serverMode = config.public.serverMode   
+const isServer = (_serverMode === 'server')
+const isServerless = !isServer
+// console.log('[useCustomer] serverMode =', _serverMode)
 
 // Payloads per futurs endpoints (Shopify / API pròpia)
 export type UpdateProfilePayload = {
@@ -63,6 +114,14 @@ export function useCustomer() {
   // Hydrate from server (/api/auth/me)
   // ---------------------------------------------------------------------------
   async function hydrate(force = false): Promise<void> {
+    if (isServerless){
+      loading.value = true
+      customer.value = null
+      initialized.value = true
+      loading.value = false
+      return
+    }
+
     if (initialized.value && !force) return
 
     loading.value = true
@@ -94,7 +153,36 @@ export function useCustomer() {
   ): Promise<LoginResponse> {
     loading.value = true
     try {
-      const res = await $fetch<LoginResponse>('/api/auth/login', {
+      let res
+      if (isServerless){
+        const foundUser = Customers.find((e,i)=> {
+
+          return e.email.toLowerCase() == email.toLowerCase()
+        })
+        if (!foundUser){
+          res = {
+            ok: false,
+            error: "INALID_CREDENTIALS",
+            message: "Email o clau incorrectes"
+          }
+        }else{
+          const mockCustomer: CustomerState = {
+            email: foundUser.email,
+            firstName: foundUser.firstName,
+            lastName: foundUser.lastName,
+            role: foundUser.role,        // 👈 aquí entra el 'admin' o 'user'
+          }
+
+          customer.value = mockCustomer
+          initialized.value = true
+          return  {
+            ok : true,
+            "customer" : customer.value 
+          }
+        }
+      }
+
+      res = await $fetch<LoginResponse>('/api/auth/login', {
         method: 'POST',
         body: { email, password },
       })
@@ -118,6 +206,42 @@ export function useCustomer() {
       loading.value = false
     }
   }
+  // ---------------------------------------------------------------------------
+  // register → /api/auth/register (mock)
+  // ---------------------------------------------------------------------------
+  async function register(
+    payload: RegisterPayload,
+  ): Promise<LoginResponse> {
+    loading.value = true
+    try {
+      // 🔹 MOCK pura: no cridem cap /api, creem un client de demo
+      const mockCustomer: CustomerState = {
+        email: payload.email,
+        firstName: payload.firstName ||null,
+
+          // ?? payload.email.split('@')[0]
+          // ?? null,
+        lastName: payload.lastName || null,
+      }
+
+      customer.value = mockCustomer
+      initialized.value = true
+
+      return {
+        ok: true,
+        customer: mockCustomer,
+      }
+    } catch (err: any) {
+      console.error('useCustomer.register error:', err)
+      return {
+        ok: false,
+        error: 'REGISTER_ERROR',
+        message: err?.message ?? 'Unknown error',
+      }
+    } finally {
+      loading.value = false
+    }
+  }
 
   // ---------------------------------------------------------------------------
   // Logout → /api/auth/logout
@@ -125,11 +249,16 @@ export function useCustomer() {
   async function logout(): Promise<void> {
     loading.value = true
     try {
-      await $fetch('/api/auth/logout', {
-        method: 'POST',
-      })
-      customer.value = null
-      initialized.value = false
+      if ( isServerless){
+        customer.value = null
+        initialized.value = false
+      }else{
+        await $fetch('/api/auth/logout', {
+          method: 'POST',
+        })
+        customer.value = null
+        initialized.value = false
+      }
     } catch (err) {
       console.error('useCustomer.logout error:', err)
     } finally {
@@ -225,9 +354,8 @@ export function useCustomer() {
     hydrate,
     login,
     logout,
-
-    // nous mètodes per al "user menu"
     updateProfile,
     changePassword,
+    register,
   }
 }
