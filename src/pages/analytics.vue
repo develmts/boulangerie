@@ -1,338 +1,415 @@
+<!-- src/pages/analytics.vue -->
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import type { DailyStats, PageStats } from '@/services/goatcounter'
+import type { DailyStats, PageStats } from '~/services/goatcounter'
 import {
-  fetchTodayStats,
-  fetchTotalViewsPerPage,
   fetchGoatCounterMock,
-} from '@/services/goatcounter'
+  fetchTotalViewsPerPage,
+  fetchTodayStats
+} from '~/services/goatcounter'
 
-const today = ref<DailyStats | null>(null)
-const weeklyTotals = ref<PageStats[]>([])
-const week = ref<DailyStats[]>([])
-const selectedPeriod = ref<'today' | 'week'>('week')
+const { t } = useI18n()
 
-const visitsToday = computed(() => today.value?.total ?? 0)
-
-// KPI's
-const weeklyTotal = computed(() =>
-  week.value.reduce((sum, day) => sum + day.total, 0)
+/**
+ * IMPORTANT
+ * Fem servir useAsyncData a nivell de setup (SSR + client hydration).
+ * - En SSR: si NUXT_GOATCOUNTER_MODE = "api" i config és correcta,
+ *   goatcounter.ts farà servir l'API real.
+ * - En client: reutilitza les dades serialitzades (no torna a trucar l'API).
+ */
+const {
+  data: dailyStats,
+  pending: pendingDaily,
+  error: errorDaily
+} = await useAsyncData<DailyStats[]>(
+  'gc-daily-stats',
+  () => fetchGoatCounterMock()
 )
 
-const weeklyAverage = computed(() => {
-  if (!week.value.length) return 0
-  return weeklyTotal.value / week.value.length
-})
+const {
+  data: perPageStats,
+  pending: pendingPages,
+  error: errorPages
+} = await useAsyncData<PageStats[]>(
+  'gc-per-page-stats',
+  () => fetchTotalViewsPerPage()
+)
 
-const topPage = computed(() => {
-  if (!weeklyTotals.value.length) return null
-  const sorted = [...weeklyTotals.value].sort((a, b) => b.views - a.views)
-  return sorted[0]
-})
+const {
+  data: todayStats
+} = await useAsyncData<DailyStats | null>(
+  'gc-today-stats',
+  () => fetchTodayStats()
+)
 
-const growthPercent = computed(() => {
-  if (week.value.length < 2) return null
-  const last = week.value[week.value.length - 1]
-  const prev = week.value[week.value.length - 2]
-  if (prev.total === 0) return null
-  return ((last.total - prev.total) / prev.total) * 100
-})
+const isLoading = computed(() => pendingDaily.value || pendingPages.value)
+const hasError = computed(() => !!errorDaily.value || !!errorPages.value)
 
+const totalViews = computed(() =>
+  (dailyStats.value ?? []).reduce((sum, day) => sum + day.total, 0)
+)
 
-onMounted(async () => {
-  today.value = await fetchTodayStats()
-  weeklyTotals.value = await fetchTotalViewsPerPage()
-  week.value = await fetchGoatCounterMock()
-})
+const totalDays = computed(() => (dailyStats.value ?? []).length)
 
-const filteredDays = computed(() => {
-  if (selectedPeriod.value === 'today') {
-    return today.value ? [today.value] : []
-  }
-  return week.value
-})
+const totalPagesTracked = computed(() => (perPageStats.value ?? []).length)
 
-// BAR CHART (top 5)
-const barChartOptions = computed(() => {
-  const sorted = [...weeklyTotals.value].sort((a, b) => b.views - a.views).slice(0, 5)
+/**
+ * Line chart: daily totals
+ */
+const dailyChartOption = computed(() => {
+  const days = dailyStats.value ?? []
 
   return {
-    title: { text: 'Top 5 pàgines (setmana)', left: 'center' },
-    tooltip: {},
-    grid: { left: 40, right: 20, top: 40, bottom: 80 },
-    xAxis: {
-      type: 'category',
-      data: sorted.map((p) => p.path),
-      axisLabel: { interval: 0, rotate: 30 },
+    title: {
+      text: t('analytics.daily_title') ?? 'Pageviews per day',
+      left: 'center',
+      textStyle: {
+        fontSize: 14
+      }
     },
-    yAxis: { type: 'value' },
-    series: [
-      {
-        type: 'bar',
-        data: sorted.map((p) => p.views),
-        itemStyle: { color: '#c85b63' },
-      },
-    ],
-  }
-})
-
-// LINE CHART (visites per dia)
-const lineChartOptions = computed(() => {
-  const days = filteredDays.value
-
-  return {
-    title: { text: 'Visites per dia', left: 'center' },
-    tooltip: { trigger: 'axis' },
-    grid: { left: 40, right: 20, top: 40, bottom: 40 },
-    xAxis: { type: 'category', data: days.map((d) => d.date) },
-    yAxis: { type: 'value' },
-    series: [
-      {
-        name: 'Visites',
-        type: 'line',
-        data: days.map((d) => d.total),
-        smooth: true,
-        lineStyle: { width: 3, color: '#c85b63' },
-        itemStyle: { color: '#c85b63' },
-      },
-    ],
-  }
-})
-
-const dailyBarChartOptions = computed(() => {
-  const days = filteredDays.value
-
-  return {
-    title: { text: 'Totals per dia', left: 'center' },
-    tooltip: { trigger: 'axis' },
-    grid: { left: 40, right: 20, top: 40, bottom: 40 },
+    tooltip: {
+      trigger: 'axis'
+    },
+    grid: {
+      left: '8%',
+      right: '4%',
+      top: 50,
+      bottom: 40
+    },
     xAxis: {
       type: 'category',
       data: days.map((d) => d.date),
       axisLabel: {
-        rotate: 30,
-      },
+        rotate: 45
+      }
     },
-    yAxis: { type: 'value' },
+    yAxis: {
+      type: 'value'
+    },
     series: [
       {
-        name: 'Visites',
-        type: 'bar',
-        data: days.map((d) => d.total),
-        itemStyle: { color: '#c85b63' },
-      },
-    ],
+        name: t('analytics.daily_series') ?? 'Pageviews',
+        type: 'line',
+        smooth: true,
+        data: days.map((d) => d.total)
+      }
+    ]
   }
 })
 
+/**
+ * Bar chart: total views per page
+ */
+const perPageChartOption = computed(() => {
+  const stats = perPageStats.value ?? []
+  // Ordenem de més vist a menys vist
+  const sorted = [...stats].sort((a, b) => b.views - a.views)
+
+  return {
+    title: {
+      text: t('analytics.per_page_title') ?? 'Total views per page',
+      left: 'center',
+      textStyle: {
+        fontSize: 14
+      }
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    grid: {
+      left: '8%',
+      right: '4%',
+      top: 50,
+      bottom: 80
+    },
+    xAxis: {
+      type: 'category',
+      data: sorted.map((p) => p.path),
+      axisLabel: {
+        rotate: 45,
+        fontSize: 10
+      }
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: t('analytics.per_page_series') ?? 'Pageviews',
+        type: 'bar',
+        data: sorted.map((p) => p.views)
+      }
+    ]
+  }
+})
 </script>
 
 <template>
-  <div class="analytics-container">
-    <header class="mb-8">
-      <h1 class="title">Analytics (mock setmana)</h1>
-      <p class="subtitle">
-        Visualització d'una setmana de visites generades com a mock.
-      </p>
-    </header>
-
-    <!-- Targetes KPI -->
-    <section class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Visites avui</div>
-        <div class="kpi-value">{{ visitsToday }}</div>
-        <div class="kpi-help"> segons mock (últim dia registrat) </div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-label">Mitjana diària (setmana)</div>
-        <div class="kpi-value">
-          {{ weeklyAverage.toFixed(1) }}
+  <section class="analytics-page">
+    <div class="analytics-inner">
+      <header class="analytics-header">
+        <div>
+          <h1 class="analytics-title">
+            {{ t('analytics.title') || 'Analítiques' }}
+          </h1>
+          <p class="analytics-subtitle">
+            {{ t('analytics.subtitle') || 'Visites segons GoatCounter' }}
+          </p>
         </div>
-        <div class="kpi-help">
-          visites/dia
-        </div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-label">Pàgina més vista</div>
-        <div class="kpi-value small">
-          <span v-if="topPage">
-            {{ topPage.path }}
+        <div class="analytics-mode">
+          <!-- Petit indicador de mode, opcional -->
+          <span class="mode-pill">
+            <!-- No podem saber 100% el mode des d'aquí sense exposar-ho,
+                 però com a mínim informem que pot estar usant mock. -->
+            {{ t('analytics.mode') || 'Dades possibles: mock o API segons config' }}
           </span>
-          <span v-else>—</span>
         </div>
-        <div class="kpi-help" v-if="topPage">
-          {{ topPage.views }} visites setmanals
+      </header>
+
+      <!-- ESTAT DE CÀRREGA / ERROR -->
+      <div v-if="isLoading" class="analytics-state">
+        <p>{{ t('analytics.loading') || 'Carregant analítiques…' }}</p>
+      </div>
+
+      <div v-else-if="hasError" class="analytics-state analytics-state--error">
+        <p>
+          {{ t('analytics.error') || 'Error carregant dades d’analítiques.' }}
+        </p>
+      </div>
+
+      <template v-else>
+        <!-- SUMMARY CARDS -->
+        <div class="analytics-summary">
+          <div class="summary-card">
+            <div class="summary-label">
+              {{ t('analytics.cards.totalViews') || 'Total de pàgines vistes' }}
+            </div>
+            <div class="summary-value">
+              {{ totalViews }}
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-label">
+              {{ t('analytics.cards.totalDays') || 'Dies en el rang' }}
+            </div>
+            <div class="summary-value">
+              {{ totalDays }}
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-label">
+              {{ t('analytics.cards.pagesTracked') || 'Pàgines diferents' }}
+            </div>
+            <div class="summary-value">
+              {{ totalPagesTracked }}
+            </div>
+          </div>
+
+          <div class="summary-card" v-if="todayStats">
+            <div class="summary-label">
+              {{ t('analytics.cards.today') || 'Avui' }}
+            </div>
+            <div class="summary-value">
+              {{ todayStats.total }}
+            </div>
+            <div class="summary-sub">
+              {{ todayStats.date }}
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="kpi-card">
-        <div class="kpi-label">Canvi vs. dia anterior</div>
-        <div class="kpi-value" v-if="growthPercent !== null">
-          {{ growthPercent.toFixed(1) }}%
+        <!-- GRÀFICS -->
+        <div class="analytics-charts">
+          <div class="chart-card">
+            <ClientOnly>
+              <VChart
+                v-if="dailyStats && dailyStats.length"
+                class="chart"
+                :option="dailyChartOption"
+                autoresize
+              />
+              <template #fallback>
+                <div class="chart-fallback">
+                  {{ t('analytics.chart_loading') || 'Carregant gràfic…' }}
+                </div>
+              </template>
+            </ClientOnly>
+          </div>
+
+          <div class="chart-card">
+            <ClientOnly>
+              <VChart
+                v-if="perPageStats && perPageStats.length"
+                class="chart"
+                :option="perPageChartOption"
+                autoresize
+              />
+              <template #fallback>
+                <div class="chart-fallback">
+                  {{ t('analytics.chart_loading') || 'Carregant gràfic…' }}
+                </div>
+              </template>
+            </ClientOnly>
+          </div>
         </div>
-        <div class="kpi-value" v-else>—</div>
-        <div class="kpi-help">
-          positiu = creix, negatiu = baixa
-        </div>
-      </div>
-    </section>
-
-
-    <!-- Selector de període -->
-    <section class="mb-6">
-      <label class="label">Període:</label>
-      <select v-model="selectedPeriod" class="select">
-        <option value="today">Avui (mock)</option>
-        <option value="week">Última setmana</option>
-      </select>
-    </section>
-
-    <!-- Resum d'avui -->
-    <section v-if="today" class="card">
-      <h2 class="section-title">Resum d'avui</h2>
-      <p class="text-lg">
-        Total visites: <strong>{{ today.total }}</strong>
-      </p>
-      <ul class="list">
-        <li v-for="page in today.pages" :key="page.path">
-          <code>{{ page.path }}</code> — {{ page.views }} visites
-        </li>
-      </ul>
-    </section>
-
-    <!-- Gràfic barres -->
-    <section>
-      <h2 class="section-title">Top 5 pàgines més vistes (setmana)</h2>
-      <div class="chart-container">
-        <VChart :option="barChartOptions" autoresize />
-      </div>
-    </section>
-
-    <!-- Gràfic línia -->
-    <section>
-      <h2 class="section-title">Visites per dia</h2>
-      <div class="chart-container">
-        <VChart :option="lineChartOptions" autoresize />
-      </div>
-    </section>
-
-    <!-- Llista simple -->
-    <section>
-      <h2 class="section-title">Totals per dia</h2>
-      <div class="chart-container">
-        <VChart :option="dailyBarChartOptions" autoresize />
-      </div>
-    </section>
-
-  </div>
+      </template>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.analytics-container {
-  padding: 2rem;
-  max-width: 900px;
+.analytics-page {
+  --bg: #f9f4ec;
+  --card-bg: #ffffff;
+  --border-subtle: #e5ddd0;
+  --text-main: #2b2620;
+  --text-muted: #7a6f63;
+  --accent: #c26a3d;
+  --radius-lg: 16px;
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
+
+  background: radial-gradient(circle at top left, #fdf6ea 0, #f9f4ec 40%, #f7f0e4 100%);
+  padding: 2.2rem 1.25rem 3rem;
+  color: var(--text-main);
+}
+
+.analytics-inner {
+  max-width: 1120px;
   margin: 0 auto;
 }
 
-.title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.2rem;
-}
-
-.subtitle {
-  color: #666;
-}
-
-.label {
-  font-weight: 500;
-}
-
-.select {
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  margin-bottom: 2rem;
-}
-
-.section-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.list li {
-  font-size: 0.9rem;
-  padding: 0.2rem 0;
-}
-
-.chart-container {
-  width: 100%;
-  height: 340px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 0.5rem;
-  background: #fff;
-  margin-bottom: 2rem;
-}
-
-.days-list li {
+.analytics-header {
   display: flex;
-  justify-content: space-between;
-  padding: 0.4rem 0;
-  border-bottom: 1px solid #eee;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
 }
 
-.total {
+.analytics-title {
+  font-family: var(--font-headings, system-ui, sans-serif);
+  font-size: 1.9rem;
+  margin: 0 0 0.4rem;
+  letter-spacing: 0.02em;
+}
+
+.analytics-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.analytics-mode {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.mode-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  background: #f2e7d8;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* STATES */
+.analytics-state {
+  padding: 1.5rem 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.analytics-state--error {
+  color: #b3261e;
+}
+
+/* SUMMARY CARDS */
+.analytics-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1.7rem;
+}
+
+.summary-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+
+.summary-value {
+  font-size: 1.4rem;
   font-weight: 600;
 }
 
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.kpi-card {
-  border: 1px solid #eee;
-  border-radius: 10px;
-  padding: 0.9rem 1rem;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-.kpi-label {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #888;
-  margin-bottom: 0.4rem;
-}
-
-.kpi-value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #c85b63;
-  margin-bottom: 0.3rem;
-  word-break: break-word;
-}
-
-.kpi-value.small {
-  font-size: 1rem;
-}
-
-.kpi-help {
+.summary-sub {
   font-size: 0.8rem;
-  color: #777;
+  color: var(--text-muted);
 }
 
+/* CHARTS */
+.analytics-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.2rem;
+}
+
+.chart-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.chart {
+  width: 100%;
+  height: 280px;
+}
+
+.chart-fallback {
+  width: 100%;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* RESPONSIVE */
+@media (min-width: 720px) {
+  .analytics-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .analytics-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .analytics-charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart {
+    height: 320px;
+  }
+}
 </style>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
+const config= useRuntimeConfig()
 
-const isDev = process.dev;
+const isDemo = config.public.optionMode == 'demo'
 
 const themes = [
   { id: "base", label: "Base" },
@@ -26,7 +27,7 @@ const applyTheme = (id: string) => {
 };
 
 onMounted(() => {
-  if (!isDev) return;
+  if (!isDemo) return;
 
   const saved = localStorage.getItem("dev-theme");
   if (saved && themes.some(t => t.id === saved)) {
@@ -36,13 +37,13 @@ onMounted(() => {
 
 // Quan canvies el select, apliquem el tema
 watch(current, (val) => {
-  if (!isDev) return;
+  if (!isDemo) return;
   applyTheme(val);
 });
 </script>
 
 <template>
-  <div v-if="isDev" class="dev-theme-switcher">
+  <div v-if="isDemo" class="theme-switcher">
     <select v-model="current">
       <option
         v-for="theme in themes"
@@ -56,7 +57,7 @@ watch(current, (val) => {
 </template>
 
 <style scoped>
-.dev-theme-switcher {
+.theme-switcher {
   position: fixed;
   right: 1rem;
   bottom: 0.5rem;
@@ -69,7 +70,7 @@ watch(current, (val) => {
   backdrop-filter: blur(6px);
 }
 
-.dev-theme-switcher select {
+.theme-switcher select {
   /* background: rgba(255, 255, 255, 0.95); */
   background: var( --color-bg);
   border: none;

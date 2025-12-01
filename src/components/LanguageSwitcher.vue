@@ -1,11 +1,9 @@
+<script setup lang="ts">
 // IMPORTANT: al mòbil aquest switcher és intencionadament minimalista.
 // Quan es fa clic al badge actual, es despleguen tots els idiomes com
 // una llista vertical de NuxtLinks, sense blur ni fons, exactament
 // sobre el mateix badge. No convertir en <button> ni afegir decoracions.
 
-
-
-<script setup lang="ts">
 const { locale, locales } = useI18n();
 const switchLocalePath = useSwitchLocalePath();
 

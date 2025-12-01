@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "Maqueta Panadería Artesana"
+    "title": "Pastisseria Piella"
   },
   "footer": {
     "copyright": "Todos los derechos reservados."
@@ -24,14 +24,14 @@
     "add_to_cart": "Añadir al Carrito",
     "adding": "Añadiendo...",
     "unavailable": "No Disponible",
-    "added": "añadido"
+    "added": "Añadido"
   },
   "cta": {
     "view_products": "Ver Nuestros Productos"
   },
   "sections": {
     "phase_2_title": "Gestión de la Presencia Online (Fase II)",
-    "loading": "Cargando Maqueta Headless. Por favor, espere..."
+    "loading": "Cargando contenido. Por favor, espere..."
   },
     "home": {
     "hero": {
@@ -110,7 +110,7 @@
         "logout": "Cerrar sesión"
       }
     },
-
+    
     "filters": {
       "categoryLabel": "Categoría",
       "categoryAll": "Todas",
@@ -126,6 +126,8 @@
       "resultsSuffix": "resultados"
     }
   },
+
+
   "userMenu": {
     "loginOrAccount": "Inicia sesión o accede a tu cuenta",
     "orders": "Mis pedidos",

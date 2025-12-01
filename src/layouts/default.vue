@@ -4,7 +4,7 @@ import AppHeader from '~/components/AppHeader.vue';
 import AppFooter from '~/components/AppFooter.vue';
 import Sidebar from '~/components/Sidebar.vue';
 import AuthOverlay from '~/components/AuthOverlay.vue';
-import DevThemeSwitcher from '~/components/DevThemeSwitcher.client.vue';
+import ThemeSwitcher from '~/components/ThemeSwitcher.client.vue';
 import ErrorCard from '~/components/ErrorCard.vue';
 import { useAppError } from '~/composables/useAppError';
 import { useConsentScriptLoader }  from  '~/composables/UseConsentScriptLoader'
@@ -35,8 +35,7 @@ onMounted(() => {
       </main>
       <AuthOverlay />
 
-    <DevThemeSwitcher />
-    <MiniCartDrawer />
+
     <AppFooter />
     <!-- 🔔 Error d’aplicació en mode modal (overlay + blur) -->
     <ErrorCard
@@ -48,7 +47,11 @@ onMounted(() => {
       @primary="clearError"
     >
     </ErrorCard>
+    <ThemeSwitcher />
+    <MiniCartDrawer />
+    <ProductOverlay />
   </div>
+
 </template>
 
 <style scoped>

@@ -2,7 +2,6 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import ProductCard from '~/components/ProductCard.vue'
 import ActionFeedback from '~/components/ActionFeedback.vue'
-// import UserMenu from '~/components/UserMenu.vue'
 import { getProducts, type ShopifyProduct, type Locale } from '~/services/shopify'
 
 import { useCart } from '~/composables/useCart'
@@ -13,37 +12,18 @@ const products = ref<ShopifyProduct[]>([])
 const isLoading = ref(false)
 const loadError = ref<string | null>(null)
 
-const selectedCategory = ref<'all' | 'pa' | 'brioixeria' | 'pastisseria'>('all')
+// "all" = sense filtre; la resta són valors de product.category
+const selectedCategory = ref<string>('all')
 const sortMode = ref<'default' | 'price-asc' | 'price-desc'>('default')
-// const userMenuRef = ref<InstanceType<typeof UserMenu> | null>(null)
-// TODO: quan tinguem cart real, substituïm aquests mocks:
-// const cartItemCount = ref(0)
 
-const { 
+const {
   addItem,
   cart,
   toggleCart,
 } = useCart()
 
-const cartItemCount = computed(() => cart.value?.totalQuantity || 0)  
+const cartItemCount = computed(() => cart.value?.totalQuantity || 0)
 const isUserLoggedIn = ref(false)
-
-/**
- * Categoria UI per producte, basada en el handle (mock).
- * Més endavant això vindrà del propi Shopify.
- */
-function getProductCategory(p: ShopifyProduct): 'pa' | 'brioixeria' | 'pastisseria' {
-  switch (p.handle) {
-    case 'baguette-tradition':
-      return 'pa'
-    case 'croissant-mantega':
-      return 'brioixeria'
-    case 'pain-au-chocolat':
-      return 'pastisseria'
-    default:
-      return 'pa'
-  }
-}
 
 async function loadProducts(currentLocale: Locale) {
   isLoading.value = true
@@ -61,24 +41,53 @@ async function loadProducts(currentLocale: Locale) {
   }
 }
 
+/**
+ * Categories disponibles derivades del mock (product.category).
+ * No hi ha llista hardcoded: només el que diguin les dades.
+ */
+const availableCategories = computed<string[]>(() => {
+  const set = new Set<string>()
+  for (const p of products.value) {
+    if (p.category) {
+      set.add(p.category)
+    }
+  }
+  return Array.from(set)
+})
+
+/**
+ * Etiqueta de categoria per la UI.
+ * Si no hi ha traducció, retornem la clau tal qual.
+ */
+function categoryLabel(cat: string): string {
+  const map: Record<string, string> = {
+    bread: t('shop.filters.categoryBread'),
+    pastry: t('shop.filters.categoryPastries'),
+    cake: t('shop.filters.categoryCakes'),
+    savory: t('shop.filters.categorySavory') ?? 'savory',
+    cookie: t('shop.filters.categoryCookies') ?? 'cookie',
+  }
+  return map[cat] ?? cat
+}
+
 const filteredProducts = computed<ShopifyProduct[]>(() => {
-  let items = products.value
+  let items = [...products.value]
 
   // Filtre per categoria
   if (selectedCategory.value !== 'all') {
     items = items.filter(
-      (p) => getProductCategory(p) === selectedCategory.value,
+      (p) => p.category === selectedCategory.value,
     )
   }
 
   // Ordenació
   if (sortMode.value === 'price-asc') {
-    items = [...items].sort((a, b) => a.priceMin - b.priceMin)
+    items = items.sort((a, b) => a.priceMin - b.priceMin)
   } else if (sortMode.value === 'price-desc') {
-    items = [...items].sort((a, b) => b.priceMin - a.priceMin)
+    items = items.sort((a, b) => b.priceMin - a.priceMin)
   } else {
-    // default: podríem ordenar per title per tenir algo estable
-    items = [...items].sort((a, b) =>
+    // default: ordenar per títol
+    items = items.sort((a, b) =>
       a.title.localeCompare(b.title),
     )
   }
@@ -130,21 +139,20 @@ watch(
             <option value="all">
               {{ t('shop.filters.categoryAll') }}
             </option>
-            <option value="pa">
-              {{ t('shop.filters.categoryBread') }}
-            </option>
-            <option value="brioixeria">
-              {{ t('shop.filters.categoryPastries') }}
-            </option>
-            <option value="pastisseria">
-              {{ t('shop.filters.categoryCakes') }}
+
+            <!-- Categories derivades del mock -->
+            <option
+              v-for="cat in availableCategories"
+              :key="cat"
+              :value="cat"
+            >
+              {{ categoryLabel(cat) }}
             </option>
           </select>
         </div>
 
         <div class="toolbar-right">
           <span class="toolbar-count">
-            <!-- {{ t('shop.filters.results', { count: filteredProducts.length }) }} -->
             {{ filteredProducts.length }} {{ t('shop.filters.resultsSuffix') }}
           </span>
 
@@ -184,7 +192,8 @@ watch(
           :key="product.id"
           :product="product"
           layout="horizontal"
-          @add-to-cart="addItem(product.id,1)"
+          :showAddButton="true"
+          @add-to-cart="addItem(product.id, 1)"
         />
       </div>
     </div>
@@ -192,7 +201,6 @@ watch(
 </template>
 
 <style scoped>
-/* (styles iguals que els teus, no toco res) */
 .shop-page {
   --shop-bg: #f9f4ec;
   --shop-card-bg: #ffffff;

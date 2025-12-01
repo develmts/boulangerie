@@ -1,5 +1,5 @@
 // src/composables/useCart.ts
-import { ref , computed} from 'vue'
+import { ref , computed, onMounted, watch} from 'vue'
 import {
   getProducts,
   addCartLines,
@@ -11,7 +11,17 @@ import {
   Locale,
 } from '~/services/shopify'
 
-const products = await getProducts(undefined, 'ca' as Locale)   // Mock
+const products = ref<any[]>([]);
+const productsLoaded=ref(false)
+
+async function loadProducts(localeCode: Locale ){
+  if (productsLoaded.value) return
+  
+  const data = await getProducts(undefined, localeCode);
+  products.value = data ?? [];
+  productsLoaded.value = true;  
+}
+// const products = await getProducts(undefined, 'ca' as Locale)   // Mock
 
 // ✅ Estat compartit entre tots els components
 const cart = ref<Cart | null>(null)
@@ -36,7 +46,8 @@ async function refreshCart() {
   isLoading.value = false
 }
 
-export function useCart() {
+export  function useCart() {
+  const { locale } = useI18n()
   // Primer ús: assegurem que hi ha cistella carregada
   if (!cart.value && !isLoading.value) {
     refreshCart()
@@ -44,14 +55,14 @@ export function useCart() {
 
   const productsById = computed(() => {
     const map = new Map<string, { title: string; price: number }>()
-    for (const p of products) {   // on allProducts ve del mock o de Shopify
+    for (const p of products.value) {   // on allProducts ve del mock o de Shopify
       map.set(p.id, { title: p.title, price:  p.priceMin })
     }
     return map
   })
 
   const enrichedLines = computed(() =>
-    cart.value?.lines.map((line) => {
+    (cart.value?.lines ?? []).map((line) => {
 
       const info = productsById.value.get(line.productId) 
       return {
@@ -64,11 +75,11 @@ export function useCart() {
   )
 
   const cartSubtotal = computed(() =>
-    enrichedLines.value?.reduce((sum, line) => sum + line.lineTotal, 0),
+    enrichedLines.value.reduce((sum, line) => sum + line.lineTotal, 0),
   )
 
   const cartTotalQuantity = computed(() =>
-    enrichedLines.value?.reduce((sum, line) => sum + line.quantity, 0),
+    enrichedLines.value.reduce((sum, line) => sum + line.quantity, 0),
   )
 
 
@@ -102,6 +113,22 @@ export function useCart() {
     await apiClearCart()
     await refreshCart()
     isLoading.value = false
+  }
+
+  if (import.meta.client) {
+    onMounted(() => {
+      // crida automàtica un cop per instància de useCart al client
+      loadProducts(locale.value as Locale)
+    })
+
+    // Si l'idioma canvia mentre l'app està viva, recarreguem productes per al nou idioma
+    watch(
+      () => locale.value,
+      (newLocale) => {
+        productsLoaded.value = false
+        loadProducts(newLocale as Locale)
+      },
+    )
   }
 
   return {

@@ -110,7 +110,7 @@ function goToCheckout() {
             {{ t('cart.checkout') }}
           </button>
           <button type="button" class="mini-cart__clear" @click="clearCart">
-            Buidar cistella
+            {{t('cart.clearCart')}}
           </button>
         </footer>
       </aside>

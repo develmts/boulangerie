@@ -7,7 +7,6 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-
 node_modules
 
 /.nuxt
@@ -17,6 +16,8 @@ dist
 dist-ssr
 *.local
 sandbox
+
+--*
 # environment / secrets
 .env
 .env-local

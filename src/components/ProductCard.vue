@@ -7,12 +7,78 @@ const { t } = useI18n();
 const props = defineProps<{ 
   product: ShopifyProduct 
   variant?: 'grid' | 'mini' | 'detail' | 'horizontal'
+  showAddButton?: boolean
 }>();
+
+const { open: openOverlay } = useProductOverlay()
+
+function handleImageClick() {
+  // Evitem obrir overlay si ja som a variant "detail" (dins overlay)
+  if (variant.value === 'detail') return
+  openOverlay(props.product)
+}
+
+// const emit = defineEmits<{
+//   (e: 'open-detail', product: ShopifyProduct): void
+// }>()
 
 const { addItem} = useCart();
 const isAdding = ref(false)
 
 const variant = computed(() => props.variant ?? 'grid')
+
+const showAddButton = computed(() => {
+  
+  // Si el pare ho especifica, manen els props
+  if (typeof props.showAddButton === 'boolean') {
+    console.log("Parent", variant.value, props.showAddButton)
+    return props.showAddButton
+  }
+
+  // Per defecte:
+  //  - grid i horizontal → SÍ botó
+  //  - mini i detail → NO botó
+  if (variant.value === 'grid' || variant.value === 'horizontal') {
+    console.log("Default",variant.value, true)
+    return true
+  }
+  console.log("Default",variant.value, false)
+  return false
+})
+
+const detailImages = computed(() => {
+  // Si el producte té un array d’imatges, el fem servir
+  const imgs = (props.product as any).images ?? []
+
+  if (Array.isArray(imgs) && imgs.length > 0) {
+    return imgs
+  }
+
+  // Sinó, fem servir només la featuredImage (com fins ara)
+  return props.product.featuredImage ? [props.product.featuredImage] : []
+})
+
+const hasMultipleDetailImages = computed(() => detailImages.value.length > 1)
+
+const currentDetailImageIndex = ref(0)
+
+const currentDetailImage = computed(() => {
+  return detailImages.value[currentDetailImageIndex.value] ?? null
+})
+
+function goPrevDetailImage() {
+  if (!hasMultipleDetailImages.value) return
+  const len = detailImages.value.length
+  currentDetailImageIndex.value =
+    (currentDetailImageIndex.value - 1 + len) % len
+}
+
+function goNextDetailImage() {
+  if (!hasMultipleDetailImages.value) return
+  const len = detailImages.value.length
+  currentDetailImageIndex.value =
+    (currentDetailImageIndex.value + 1) % len
+}
 
 // -----------------------------------------------------------------------------
 // ADD TO CART
@@ -56,9 +122,6 @@ const displayPrice = computed(() => {
       { 'unavailable': !product.availableForSale }
     ]"
   >
-    <!-- ==========================
-         VARIANT: MINI
-         ========================== -->
     <template v-if="variant === 'mini'">
       <div class="mini-layout">
         <img
@@ -66,6 +129,7 @@ const displayPrice = computed(() => {
           :alt="product.featuredImage?.altText || product.title"
           class="mini-image"
           loading="lazy"
+          @click="handleImageClick"
         />
         <div class="mini-info">
           <h4 class="mini-title">
@@ -74,6 +138,25 @@ const displayPrice = computed(() => {
           <p class="mini-price">
             {{ displayPrice }} €
           </p>
+          <!-- 
+          <button
+            v-if="showAddButton"
+            type="button"
+            class="product-button mini-button"
+            @click="handleAddToCart"
+            :disabled="isAdding"
+          >   
+            <span v-if="!product.availableForSale">
+              {{ t('product.unavailable') }}
+            </span>
+            <span v-else-if="isAdding">
+              {{ t('product.adding') }}
+            </span>
+            <span v-else>
+              {{ t('product.add_to_cart') }}
+            </span>
+          </button> 
+          -->
         </div>
       </div>
     </template>
@@ -89,6 +172,7 @@ const displayPrice = computed(() => {
             :alt="product.featuredImage?.altText || product.title"
             class="horizontal-image"
             loading="lazy"
+            @click="handleImageClick"
           />
         </div>
         <div class="horizontal-main">
@@ -99,6 +183,7 @@ const displayPrice = computed(() => {
             {{ displayPrice }} €
           </p>
           <button 
+            v-if="showAddButton"
             type="button"
             class="product-button horizontal-button product-card__add-to-cart"
             @click="handleAddToCart" 
@@ -117,10 +202,60 @@ const displayPrice = computed(() => {
         </div>
       </div>
     </template>
+    <!-- ==========================
+        VARIANT: DETAIL (hero descriptiu)
+        ========================== -->
+    <template v-else-if="variant === 'detail'">
+      <div class="detail-layout">
+        <div class="detail-image-wrapper">
+          <img
+            v-if="currentDetailImage"
+            :src="currentDetailImage.url"
+            :alt="currentDetailImage.altText || product.title"
+            class="detail-image"
+            loading="lazy"
+          />
+
+          <!-- Fletxes només si hi ha més d’una imatge -->
+          <button
+            v-if="hasMultipleDetailImages"
+            type="button"
+            class="detail-nav detail-nav--prev"
+            @click.stop="goPrevDetailImage"
+            aria-label="Imatge anterior"
+          >
+            ‹
+          </button>
+          <button
+            v-if="hasMultipleDetailImages"
+            type="button"
+            class="detail-nav detail-nav--next"
+            @click.stop="goNextDetailImage"
+            aria-label="Imatge següent"
+          >
+            ›
+          </button>
+        </div>
+
+        <div class="detail-main">
+          <h2 class="detail-title">
+            {{ product.title }}
+          </h2>
+
+          <!-- Ajusta al camp de descripció real que tinguis al ShopifyProduct -->
+          <p v-if="product.description" class="detail-description">
+            {{ product.description }}
+          </p>
+
+          <!-- Aquí hi podríem afegir, en el futur, info "zero comercial":
+              origen, història, notes, al·lèrgens, etc. -->
+        </div>
+      </div>
+    </template>
+
 
     <!-- ==========================
          VARIANT: GRID (DEFAULT)
-         També s'utilitza per "detail" de moment
          ========================== -->
     <template v-else>
       <!-- IMATGE -->
@@ -130,6 +265,7 @@ const displayPrice = computed(() => {
           :alt="product.featuredImage?.altText || product.title" 
           class="product-image"
           loading="lazy"
+          @click="handleImageClick"
         />
       </div>
 
@@ -144,6 +280,7 @@ const displayPrice = computed(() => {
         </p>
 
         <button 
+          v-if="showAddButton"
           type="button"
           class="product-button"
           @click="handleAddToCart" 
@@ -152,7 +289,7 @@ const displayPrice = computed(() => {
           <span v-if="!product.availableForSale">
             {{ t('product.unavailable') }}
           </span>
-          <span v-else-if="!isAdding">
+          <span v-else-if="isAdding">
             {{ t('product.adding') }}
           </span>
           <span v-else>
@@ -197,7 +334,7 @@ const displayPrice = computed(() => {
 
 .product-image-wrapper {
   width: 100%;
-  max-height: 150px;
+  height: 150px;
   margin-bottom: 0.6rem;
   overflow: hidden;
   border-radius: var(--radius-s);
@@ -207,6 +344,7 @@ const displayPrice = computed(() => {
 .product-image {
   width: 100%;
   height: 100%;
+  object-position: center center;  /* ⬅️ centra el “focus” de la imatge */
   object-fit: cover;
   display: block;
   transition: transform 0.25s ease-out;
@@ -379,6 +517,134 @@ const displayPrice = computed(() => {
 .horizontal-button {
   margin-top: 0.1rem;
 }
+
+/* ==========================
+   DETAIL (hero descriptiu)
+   ========================== */
+
+.product-card--detail {
+  padding: 1.4rem 1.6rem;
+  text-align: left;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.6fr);
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.detail-image-wrapper {
+  position: relative;
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+  max-height: 340px;
+}
+
+.detail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+.detail-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  justify-content: center; /* ⬅️ centra el text en alçada a desktop */
+}
+
+.detail-title {
+  margin: 0;
+  font-size: 1.6rem;              /* ⬅️ una mica més gran que grid */
+  font-family: var(--font-heading);
+  color: var(--color-text-brand);
+}
+
+.detail-description {
+  margin: 0;
+  font-size: 1.02rem;             /* ⬅️ una mica més gran que el body normal */
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+
+/* Placeholder per futura meta “no comercial” (origen, història, etc.)
+.detail-meta {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+.detail-meta li + li {
+  margin-top: 0.2rem;
+}
+*/
+
+.detail-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  font-size:400%; 
+  font-weight: bolder;
+  background: rgba(0, 0, 0, 0.0);  /* fully transparent */
+  /* color: var(--color-surface,); */
+  color: color-mix(in srgb, var(--color-surface) 20%, transparent);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease-out,
+    opacity 0.15s ease;
+}
+
+.detail-nav--prev {
+  left: -0.6rem;
+}
+
+.detail-nav--next {
+  right: -0.6rem;
+}
+
+.detail-nav:hover {
+  /* background: rgba(0, 0, 0, 0.5); */
+  color: color-mix(in srgb, var(--color-surface) 40%, transparent);
+  transform: translateY(-50%) scale(1.03);
+}
+
+.detail-nav:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+@media (max-width: 768px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+    align-items: flex-start; /* a mòbil millor no centrar verticalment */
+  }
+
+  .detail-image-wrapper {
+    max-height: 260px;
+  }
+
+  .detail-main {
+    justify-content: flex-start;
+  }
+}
+
+
 
 @media (max-width: 600px) {
   .horizontal-layout {

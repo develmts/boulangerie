@@ -359,7 +359,55 @@ function goBackToAccount() {
 
 .auth-overlay-logout {
   margin-top: 1.2rem;
+
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+
+  background: var(--color-button);
+  color: var(--color-surface);
+
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  white-space: nowrap;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: var(--shadow-soft);
+  transition:
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.1s ease-out,
+    opacity 0.15s ease;
 }
+
+..auth-overlay-logout:not(:disabled) {
+  background: var(--color-button-hover);
+  box-shadow: var(--shadow-strong);
+  transform: translateY(-1px);
+}
+
+..auth-overlay-logout:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Estat disabled (no disponible o afegint) */
+.auth-overlay-logout:disabled {
+  cursor: default;
+  opacity: 0.7;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+  box-shadow: none;
+  border: 1px solid var(--color-border-subtle);
+}
+
+
+
 
 /* Formularis */
 .auth-form {

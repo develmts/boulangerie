@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "Artisan Bakery Mockup"
+    "title": "Piella Pastry Shop"
   },
   "footer": {
     "copyright": "All rights reserved"
@@ -31,7 +31,7 @@
   },
   "sections": {
     "phase_2_title": "Online Presence Management (Phase II)",
-    "loading": "Loading Headless Mockup. Please wait..."
+    "loading": "Loading content. Please wait..."
   },
   "home": {
     "hero": {
@@ -126,6 +126,23 @@
       "resultsSuffix": "results"
     }
   },
+  "cart": {
+    "label": "Basket",
+    "items": "Elements",
+    "clearCart": "Clear",
+    "subtotal": "Price",
+    "checkout": "Pay",
+    "checkoutTitle": "Order",
+    "isEmpty": "Basket is empty",
+    "confirm": "Accept",
+    "noProducts": "There's no products in the basket",
+    "orderSummary": "Summary",
+    "totals": "Total",
+    "additionalInfoTitle": "Details",
+    "additionalInfoHint": "...",
+    "backToCart": "Back"
+
+  },  
   "userMenu": {
     "loginOrAccount": "Sign in or access your account",
     "orders": "My orders",

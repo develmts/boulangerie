@@ -37,7 +37,7 @@
   },
   "sections": {
     "phase_2_title": "Gestio de la Presencia Online (Fase II)",
-    "loading": "Carregant Maqueta Headless. Esperi, si us plau..."
+    "loading": "Carregant contingut. Esperi, si us plau..."
   },
   "home": {
     "hero": {
@@ -104,7 +104,7 @@
 
     "cart": {
       "label": "Cistella",
-      "items": "Coses",
+      "items": "Elements",
       "subtotal": "Preu"
     },
 
@@ -118,6 +118,8 @@
       "categoryBread": "Pa",
       "categoryPastries": "Brioixeria",
       "categoryCakes": "Pastisseria",
+      "categoryCookies": "Galetes i paste de tè",
+      "categorySavory": "Salat",
 
       "sortLabel": "Ordenar",
       "sortDefault": "Per defecte",
@@ -131,12 +133,18 @@
   "cart": {
     "label": "Cistella",
     "items": "Elements",
+    "clearCart": "Buidar",
     "subtotal": "Preu",
     "checkout": "Pagar",
     "checkoutTitle": "Comanda",
     "isEmpty": "la cistella es buida",
     "confirm": "D'acord",
-    "noProducts": "Encara no hi ha productes a la cistella"
+    "noProducts": "Encara no hi ha productes a la cistella",
+    "orderSummary": "Resum",
+    "totals": "Total",
+    "additionalInfoTitle": "Detalls",
+    "additionalInfoHint": "...",
+    "backToCart": "Tornar"
   },
 
   "userMenu": {
@@ -153,12 +161,20 @@
     "adminSection": "Seccio privada"
   },
   "analytics": {
+    "mode": "Mode",
     "title": "Anàlisi de visites",
+    "subtitle": "Anàlisi de visites",
     "selectPeriod": "Selecciona període",
     "period": {
       "today": "Avui",
       "week": "Última setmana",
       "custom": "Personalitzat"
+    },
+    "cards": {
+      "totalViews":"Total HIts",
+      "totalDays":"Dies",
+      "pagesTracked":"Pàgines",
+      "today":"Avui"
     },
     "topPages": "Top 5 pàgines més vistes ({period})",
     "visitsOverTime": "Distribució de visites",
@@ -166,7 +182,8 @@
     "chartTitleVisitsOverTime": "Visites per dia",
     "seriesTotalVisits": "Visites totals",
     "rawTotals": "Totals per dia",
-    "views": "{count} visites"
+    "views": "{count} visites",
+    "error": "Problema accedint a dades analitiques"
   },
 
   "cookies": {

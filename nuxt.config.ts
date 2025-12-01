@@ -18,7 +18,7 @@ export default defineNuxtConfig({
         {
           src: 'https://gc.zgo.at/count.js',
           async: true,
-          'data-goatcounter': 'https://tu-compte.goatcounter.com/count',
+          'data-goatcounter': 'https://niko-dev.goatcounter.com/count',
         }
       ]
     }
@@ -84,7 +84,8 @@ export default defineNuxtConfig({
       socialFacebook: process.env.NUXT_PUBLIC_SOCIAL_FACEBOOK,
       socialTiktok: process.env.NUXT_PUBLIC_SOCIAL_TIKTOK,
       cmsSource:  process.env.NUXT_PUBLIC_CMS_SOURCE || 'content',
-      serverMode: process.env.SERVER_MODE || 'serverless'
+      serverMode: process.env.SERVER_MODE || 'serverless',
+      optionMode: process.env.OPTIOINS_MODE || 'demo'
     },
   },  
   srcDir: 'src/',

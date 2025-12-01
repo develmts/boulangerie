@@ -4,6 +4,7 @@
 // IMPORTS CORREGITS
 import { 
   getProducts, 
+  getFeaturedProducts,
   type ShopifyProduct, 
   type Locale 
 } from '~/services/shopify';
@@ -39,7 +40,7 @@ const loadData = async (currentLocale: Locale) => {
   try {
     const [content, prods] = await Promise.all([
       getCmsPage('homepage-hero', currentLocale),
-      getProducts(3, currentLocale)   // <-- ja retorna ShopifyProduct[]
+      getFeaturedProducts(currentLocale)   // <-- ja retorna ShopifyProduct[]
     ]);
     // const prods = await getProducts(3, currentLocale);
     heroContent.value = content;

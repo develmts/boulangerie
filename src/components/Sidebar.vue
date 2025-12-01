@@ -87,16 +87,6 @@ function closeMenu() {
 .sidebar {
   display: none;
   box-shadow: 4px 0 12px rgba(0,0,0,0.12);
-  /* border-right: 1px solid rgba(0,0,0,0.08); */
-  /*     
-    box-shadow: none;
-    background:
-      linear-gradient(to right,
-        rgba(0,0,0,0.06) 0px,
-        transparent 8px
-      ),
-      var(--color-surface);
-  */
     
   backdrop-filter: blur(6px);
   /* background: color-mix(in srgb, var(-color--surface) 75%, transparent); */
@@ -110,7 +100,7 @@ function closeMenu() {
     display: flex;
     position: fixed;
 
-    /* Ajusta aquests valors segons alçada header/footer reals */
+
     top: 56px;     /* espai per al header fixed */
     left: 0;
     bottom: 56px;  /* espai per al footer fixed */
@@ -119,20 +109,11 @@ function closeMenu() {
     max-width: 80vw;
     box-sizing: border-box;
     box-shadow: 4px 0 12px rgba(0,0,0,0.12);
-    /* border-right: 1px solid rgba(0,0,0,0.08); */
-    /*     
-      box-shadow: none;
-      background:
-        linear-gradient(to right,
-          rgba(0,0,0,0.06) 0px,
-          transparent 8px
-        ),
-        var(--color-surface);
-    */
+
       
     backdrop-filter: blur(6px);
-    /* background: color-mix(in srgb, var(-color--surface) 75%, transparent); */
-    background: var(-color--surface); 
+    
+    background: var(--color-surface); 
     /* box-shadow: 4px 0 12px var(--shadow-soft); */
     padding: 1.25rem 1.5rem;
     z-index: 55;
@@ -206,7 +187,7 @@ function closeMenu() {
 /* Active highlight */
 .sidebar-link--active {
   background: var(--color-accent-soft);
-  color: var(--color-text-brand);
+  color: var(--color-text-muted);
   font-weight: 600;
 }
 
