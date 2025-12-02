@@ -90,7 +90,11 @@
     "changesAnswer": "Si necessites modificar o cancel·lar una comanda, contacta amb nosaltres tan aviat com sigui possible. Per a productes del dia, intentarem adaptar-nos-hi si encara no han estat elaborats. En el cas de pastissos personalitzats o encàrrecs especials, pot ser que no sigui possible fer canvis si la producció ja està en marxa."
   },
   "blog": {
-    "metaDescription": "Històries, curiositats i secrets del nostre obrador." 
+    "metaDescription": "Històries, curiositats i secrets del nostre obrador." ,
+    "pageTitle":"Piella's Blog",
+    "readingMinutes":"Temps de lectura",
+    "empty": "Encara nio hi ha res"
+    
   },
   "about": {
     "metaDescription": "Tradició, temps i ofici: la història i la manera de treballar de la pastisseria."

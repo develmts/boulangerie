@@ -4,64 +4,84 @@
 // una llista vertical de NuxtLinks, sense blur ni fons, exactament
 // sobre el mateix badge. No convertir en <button> ni afegir decoracions.
 
-const { locale, locales } = useI18n();
-const switchLocalePath = useSwitchLocalePath();
+const { locale, locales } = useI18n()
+const rawSwitchLocalePath = useSwitchLocalePath()
+const route = useRoute()
 
-const isOpen = ref(false);
+// Wrapper per normalitzar el path i, en el cas del blog, treure el hash
+const switchLocalePath = (code: any) => {
+  const targetCode =
+    typeof code === 'string'
+      ? code
+      : typeof code === 'object' && code !== null && 'code' in code
+        ? (code.code as string)
+        : String(code)
+
+  const raw = rawSwitchLocalePath(targetCode)
+
+  // Al blog, evitem el hash per no causar hydration mismatch
+  if (route.path === '/blog' || route.path.startsWith('/blog/')) {
+    return raw.split('#')[0]
+  }
+
+  return raw
+}
+
+const isOpen = ref(false)
 
 // Normalitzar locales: accepta string[] o objectes amb .code
 const normalizedLocales = computed(() => {
-  const value = locales?.value ?? locales;
+  const value = locales?.value ?? locales
 
-  if (!Array.isArray(value)) return [];
+  if (!Array.isArray(value)) return []
 
   return value.map((loc: any) => {
     if (typeof loc === 'string') {
-      return { code: loc };
+      return { code: loc }
     }
-    return loc;
-  });
-});
+    return loc
+  })
+})
 
 const panelLocales = computed(() => {
-  const activeCode = locale.value;
-  const list = normalizedLocales.value.slice();
+  const activeCode = locale.value
+  const list = normalizedLocales.value.slice()
 
   // Posem sempre la llengua activa al principi
   list.sort((a, b) => {
-    if (a.code === activeCode && b.code !== activeCode) return -1;
-    if (b.code === activeCode && a.code !== activeCode) return 1;
-    return 0; // la resta mantenen l'ordre original entre elles
-  });
+    if (a.code === activeCode && b.code !== activeCode) return -1
+    if (b.code === activeCode && a.code !== activeCode) return 1
+    return 0 // la resta mantenen l'ordre original entre elles
+  })
 
-  return list;
-});
+  return list
+})
 
-
-const isActive = (code: string) => code === locale.value;
+const isActive = (code: string) => code === locale.value
 
 const close = () => {
-  isOpen.value = false;
-};
+  isOpen.value = false
+}
 
 const toggle = () => {
-  isOpen.value = !isOpen.value;
-};
+  isOpen.value = !isOpen.value
+}
 
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Escape') {
-    close();
+    close()
   }
-};
+}
 
 onMounted(() => {
-  window.addEventListener('keydown', handleKeydown);
-});
+  window.addEventListener('keydown', handleKeydown)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleKeydown);
-});
+  window.removeEventListener('keydown', handleKeydown)
+})
 </script>
+
 
 <template>
   <div class="language-switcher">
