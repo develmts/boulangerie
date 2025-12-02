@@ -1,62 +1,64 @@
 <!-- src/pages/analytics.vue -->
 <script setup lang="ts">
-import type { DailyStats, PageStats } from '~/services/goatcounter'
-import {
-  fetchGoatCounterMock,
-  fetchTotalViewsPerPage,
-  fetchTodayStats
-} from '~/services/goatcounter'
+import { RefSymbol } from '@vue/reactivity'
 
 const { t } = useI18n()
 
-/**
- * IMPORTANT
- * Fem servir useAsyncData a nivell de setup (SSR + client hydration).
- * - En SSR: si NUXT_GOATCOUNTER_MODE = "api" i config és correcta,
- *   goatcounter.ts farà servir l'API real.
- * - En client: reutilitza les dades serialitzades (no torna a trucar l'API).
- */
-const {
-  data: dailyStats,
-  pending: pendingDaily,
-  error: errorDaily
-} = await useAsyncData<DailyStats[]>(
-  'gc-daily-stats',
-  () => fetchGoatCounterMock()
-)
+type Daily = {
+  date: string
+  total: number
+}
+
+type PageStats = {
+  path: string
+  views: number
+}
+
+type PlatformStat = {
+  name: string
+  count: number
+}
+
+type AnalyticsResponse = {
+  daily: Daily[]
+  perPage: PageStats[]
+  today: Daily | null
+  totalVisitors: number
+  meta: {
+    start: string
+    end: string
+  }
+  browsers: PlatformStat[]
+  systems: PlatformStat[]
+}
 
 const {
-  data: perPageStats,
-  pending: pendingPages,
-  error: errorPages
-} = await useAsyncData<PageStats[]>(
-  'gc-per-page-stats',
-  () => fetchTotalViewsPerPage()
+  data,
+  pending,
+  error
+} = await useAsyncData<AnalyticsResponse>('gc-analytics', () =>
+  $fetch('/api/analytics/goatcounter')
 )
 
-const {
-  data: todayStats
-} = await useAsyncData<DailyStats | null>(
-  'gc-today-stats',
-  () => fetchTodayStats()
-)
+const isLoading = computed(() => pending.value)
+const hasError = computed(() => !!error.value)
 
-const isLoading = computed(() => pendingDaily.value || pendingPages.value)
-const hasError = computed(() => !!errorDaily.value || !!errorPages.value)
+const dailyStats = computed<Daily[]>(() => data.value?.daily ?? [])
+const perPageStats = computed<PageStats[]>(() => data.value?.perPage ?? [])
+const todayStats = computed<Daily | null>(() => data.value?.today ?? null)
 
-const totalViews = computed(() =>
-  (dailyStats.value ?? []).reduce((sum, day) => sum + day.total, 0)
-)
+const browserStats = computed<PlatformStat[]>(() => data.value?.browsers ?? [])
+const systemStats = computed<PlatformStat[]>(() => data.value?.systems ?? [])
 
-const totalDays = computed(() => (dailyStats.value ?? []).length)
-
-const totalPagesTracked = computed(() => (perPageStats.value ?? []).length)
+const totalViews = computed(() => data.value?.totalVisitors ?? 0)
+const totalDays = computed(() => dailyStats.value.length)
+const totalPagesTracked = computed(() => perPageStats.value.length)
 
 /**
  * Line chart: daily totals
  */
 const dailyChartOption = computed(() => {
-  const days = dailyStats.value ?? []
+  const days = dailyStats.value
 
   return {
     title: {
@@ -100,10 +102,10 @@ const dailyChartOption = computed(() => {
  * Bar chart: total views per page
  */
 const perPageChartOption = computed(() => {
-  const stats = perPageStats.value ?? []
-  // Ordenem de més vist a menys vist
+  const stats = perPageStats.value
   const sorted = [...stats].sort((a, b) => b.views - a.views)
 
+  
   return {
     title: {
       text: t('analytics.per_page_title') ?? 'Total views per page',
@@ -156,15 +158,15 @@ const perPageChartOption = computed(() => {
           </p>
         </div>
         <div class="analytics-mode">
-          <!-- Petit indicador de mode, opcional -->
           <span class="mode-pill">
-            <!-- No podem saber 100% el mode des d'aquí sense exposar-ho,
-                 però com a mínim informem que pot estar usant mock. -->
-            {{ t('analytics.mode') || 'Dades possibles: mock o API segons config' }}
+            {{ t('analytics.mode') || 'Dades reals via GoatCounter (últims dies)' }}
           </span>
         </div>
       </header>
-
+        <p v-if="error && error.message " class="analytics-error-detail">
+          {{ error.message }}
+          
+        </p>
       <!-- ESTAT DE CÀRREGA / ERROR -->
       <div v-if="isLoading" class="analytics-state">
         <p>{{ t('analytics.loading') || 'Carregant analítiques…' }}</p>
@@ -174,6 +176,11 @@ const perPageChartOption = computed(() => {
         <p>
           {{ t('analytics.error') || 'Error carregant dades d’analítiques.' }}
         </p>
+        <!-- <p v-if="error?.statusMessage" class="analytics-error-detail">
+          {{ error.statusMessage }}
+          
+        </p> -->
+
       </div>
 
       <template v-else>
@@ -224,7 +231,7 @@ const perPageChartOption = computed(() => {
           <div class="chart-card">
             <ClientOnly>
               <VChart
-                v-if="dailyStats && dailyStats.length"
+                v-if="dailyStats.length"
                 class="chart"
                 :option="dailyChartOption"
                 autoresize
@@ -240,7 +247,7 @@ const perPageChartOption = computed(() => {
           <div class="chart-card">
             <ClientOnly>
               <VChart
-                v-if="perPageStats && perPageStats.length"
+                v-if="perPageStats.length"
                 class="chart"
                 :option="perPageChartOption"
                 autoresize
@@ -253,6 +260,41 @@ const perPageChartOption = computed(() => {
             </ClientOnly>
           </div>
         </div>
+
+        <!-- DESGLOSSAMENT PER NAVEGADOR / SISTEMA -->
+        <div class="analytics-platforms" v-if="browserStats.length || systemStats.length">
+          <div class="platform-card" v-if="browserStats.length">
+            <h2 class="platform-title">
+              {{ t('analytics.browsers_title') || 'Navegadors principals' }}
+            </h2>
+            <ul class="platform-list">
+              <li
+                v-for="b in browserStats.slice(0, 6)"
+                :key="b.name"
+                class="platform-row"
+              >
+                <span class="platform-name">{{ b.name || '—' }}</span>
+                <span class="platform-count">{{ b.count }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="platform-card" v-if="systemStats.length">
+            <h2 class="platform-title">
+              {{ t('analytics.systems_title') || 'Plataformes / sistemes' }}
+            </h2>
+            <ul class="platform-list">
+              <li
+                v-for="s in systemStats.slice(0, 6)"
+                :key="s.name"
+                class="platform-row"
+              >
+                <span class="platform-name">{{ s.name || '—' }}</span>
+                <span class="platform-count">{{ s.count }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
       </template>
     </div>
   </section>
@@ -261,7 +303,7 @@ const perPageChartOption = computed(() => {
 <style scoped>
 .analytics-page {
   --bg: #f9f4ec;
-  --card-bg: #ffffff;
+  --card-bg: var(--color-surface);
   --border-subtle: #e5ddd0;
   --text-main: #2b2620;
   --text-muted: #7a6f63;
@@ -328,6 +370,13 @@ const perPageChartOption = computed(() => {
   color: #b3261e;
 }
 
+.analytics-error-detail {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #b3261e;
+  opacity: 0.8;
+}
+
 /* SUMMARY CARDS */
 .analytics-summary {
   display: grid;
@@ -392,6 +441,56 @@ const perPageChartOption = computed(() => {
   color: var(--text-muted);
 }
 
+/* BREAKDOWN PER PLATFORM */
+.analytics-platforms {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.platform-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem 1rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.platform-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.platform-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.platform-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+  font-size: 0.85rem;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.04);
+}
+
+.platform-row:last-child {
+  border-bottom: none;
+}
+
+.platform-name {
+  color: var(--text-main);
+}
+
+.platform-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
 /* RESPONSIVE */
 @media (min-width: 720px) {
   .analytics-header {
@@ -405,6 +504,10 @@ const perPageChartOption = computed(() => {
   }
 
   .analytics-charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analytics-platforms {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

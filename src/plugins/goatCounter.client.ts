@@ -19,7 +19,28 @@ export default defineNuxtPlugin((nuxtApp) => {
         path: location.pathname + location.search,
         title: document.title,
         referrer: document.referrer,
+        allow_local:true
       });
     }
   });
+    // 2) Injectar el script de GoatCounter si encara no existeix
+  if (!document.querySelector('script[data-goatcounter]')) {
+    const script = document.createElement('script')
+    script.setAttribute('data-goatcounter', 'https://niko-dev.goatcounter.com/count')
+    script.setAttribute('async', '')
+    script.src = 'https://gc.zgo.at/count.js'
+    document.head.appendChild(script)
+  }
+
+  // 3) Comptar cada canvi de pàgina (SPA)
+  nuxtApp.hook('page:finish', () => {
+    const gc = (window as any).goatcounter
+    if (gc && typeof gc.count === 'function') {
+      gc.count({
+        path: location.pathname + location.search,
+        title: document.title,
+        referrer: document.referrer,
+      })
+    }
+  })
 });

@@ -176,6 +176,12 @@
       "pagesTracked":"Pàgines",
       "today":"Avui"
     },
+    "chart_loading":"",
+    "chart_daily_title":"Diari",
+    "chart_daily_series":"diary",
+    "chart_per_page_title":"Per pàgina",
+    "chart_per_page_series":"per pàgina",
+    
     "topPages": "Top 5 pàgines més vistes ({period})",
     "visitsOverTime": "Distribució de visites",
     "chartTitleTopPages": "Pàgines més vistes",
@@ -183,7 +189,13 @@
     "seriesTotalVisits": "Visites totals",
     "rawTotals": "Totals per dia",
     "views": "{count} visites",
-    "error": "Problema accedint a dades analitiques"
+    "error": "Problema accedint a dades analitiques",
+    "browsers_title": "Navegadors",
+    "systems_title": "Plataforma",
+    "daily_title":"Diari",
+    "daily_series": "Dades diaries",
+    "per_page_title":"Per pàgina",
+    "per_page_series": "Dades per pàgina"
   },
 
   "cookies": {

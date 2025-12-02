@@ -52,7 +52,7 @@ function mapMockDays(): DailyStats[] {
  *   GOATCOUNTER_API_KEY   = "secret"      (API token)
  */
 const GOATCOUNTER_MODE =
-  process.env.NUXT_GOATCOUNTER_MODE === 'api' ? 'api' : 'mock'
+  process.env.NUXT_GOATCOUNTER_MODE === 'mock' ? 'mock' : 'api'
 
 const GOATCOUNTER_SITE =
   process.env.GOATCOUNTER_SITE || process.env.NUXT_GOATCOUNTER_SITE || ''
@@ -83,6 +83,14 @@ function shouldUseApi(): boolean {
   return GOATCOUNTER_MODE === 'api' && isServer() && hasApiConfig()
 }
 
+console.log(`NUXT_GOATCOUNTER_MODE: ${GOATCOUNTER_MODE}`)
+console.log(`GOATCOUNTER_SITE: ${GOATCOUNTER_SITE}`)
+console.log(`GOATCOUNTER_API_KEY: ${GOATCOUNTER_API_KEY}`)
+console.log(`GOATCOUNTER_API_BASE: ${GOATCOUNTER_API_BASE}`)
+console.log(`Is Server: ${isServer()}`)
+console.log(`Has Api: ${hasApiConfig()}`)
+console.log(`shouldUseApi: ${shouldUseApi()}`)
+
 /* -------------------------------------------------------------------------- */
 /*  PUBLIC API (AUTO: API vs MOCK)                                            */
 /*  These are the functions that analytics.vue is already using.              */
@@ -98,6 +106,14 @@ export async function fetchGoatCounterMock(): Promise<DailyStats[]> {
     return fetchGoatCounterStatsFromAPI()
   }
   return mapMockDays()
+}
+
+/**
+ * ✅ Nova funció: alias perquè analytics.vue pugui cridar fetchDailyStats()
+ *    sense trencar res. Reutilitza tota la lògica API/mock de dalt.
+ */
+export async function fetchDailyStats(): Promise<DailyStats[]> {
+  return fetchGoatCounterMock()
 }
 
 /**
@@ -157,15 +173,20 @@ type GoatCounterTotalResponse = {
 }
 
 type GoatCounterHitsResponse = {
-  stats: {
+  hits: {
     path: string
     title?: string
+    // count total de visites en el rang per aquest path
+    count: number
+    max: number
     stats: {
       day: string
       daily: number
       hourly: number[]
     }[]
   }[]
+  total: number
+  more: boolean
 }
 
 function toHourISO(d: Date): string {
@@ -248,6 +269,26 @@ export async function fetchGoatCounterStatsFromAPI(
   const hitsJson = (await hitsResp.json()) as GoatCounterHitsResponse
 
   const byDay: Record<string, DailyStats> = {}
+   // Enrich with per-page breakdown
+  for (const item of hitsJson.hits) {
+    const path = item.path
+    for (const stat of item.stats) {
+      const day = stat.day
+      const views = stat.daily
+
+      if (!byDay[day]) {
+        byDay[day] = {
+          date: day,
+          total: views,
+          pages: [],
+        }
+      }
+
+      byDay[day].pages.push({ path, views })
+    }
+  }
+
+
 
   // Base per-day totals
   for (const stat of totalJson.stats) {
@@ -259,7 +300,7 @@ export async function fetchGoatCounterStatsFromAPI(
   }
 
   // Enrich with per-page breakdown
-  for (const item of hitsJson.stats) {
+  for (const item of hitsJson.hits) {
     const path = item.path
     for (const stat of item.stats) {
       const day = stat.day

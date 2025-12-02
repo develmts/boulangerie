@@ -70,6 +70,9 @@ export default defineNuxtConfig({
   ], 
 
   runtimeConfig: {
+    
+    goatcounterBaseUrl: process.env.GOATCOUNTER_BASE_URL,
+    goatcounterApiKey: process.env.GOATCOUNTER_API_KEY,
     public: {
       mockCdnBaseUrl:
         process.env.NUXT_PUBLIC_MOCK_CDN_BASE_URL ||
