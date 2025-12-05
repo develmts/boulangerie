@@ -1,7 +1,5 @@
 <!-- src/pages/analytics.vue -->
 <script setup lang="ts">
-import { RefSymbol } from '@vue/reactivity'
-
 const { t } = useI18n()
 
 type Daily = {
@@ -105,7 +103,6 @@ const perPageChartOption = computed(() => {
   const stats = perPageStats.value
   const sorted = [...stats].sort((a, b) => b.views - a.views)
 
-  
   return {
     title: {
       text: t('analytics.per_page_title') ?? 'Total views per page',
@@ -143,6 +140,163 @@ const perPageChartOption = computed(() => {
     ]
   }
 })
+
+/**
+ * Donut per Navegadors (desktop)
+ */
+const browsersDonutOption = computed(() => {
+  const stats = browserStats.value
+  if (!stats.length) return {}
+
+  return {
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      orient: 'horizontal',
+      bottom: 0,
+      textStyle: {
+        fontSize: 10
+      }
+    },
+    series: [
+      {
+        name: t('analytics.browsers_title') || 'Navegadors',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '45%'],
+        avoidLabelOverlap: true,
+        label: {
+          show: false
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 11,
+            fontWeight: 'bold'
+          }
+        },
+        data: stats.map((b) => ({
+          name: b.name || '—',
+          value: b.count
+        }))
+      }
+    ]
+  }
+})
+
+/**
+ * Donut per Plataformes (desktop)
+ */
+const systemsDonutOption = computed(() => {
+  const stats = systemStats.value
+  if (!stats.length) return {}
+
+  return {
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      orient: 'horizontal',
+      bottom: 0,
+      textStyle: {
+        fontSize: 10
+      }
+    },
+    series: [
+      {
+        name: t('analytics.systems_title') || 'Plataformes',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        center: ['50%', '45%'],
+        avoidLabelOverlap: true,
+        label: {
+          show: false
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 11,
+            fontWeight: 'bold'
+          }
+        },
+        data: stats.map((s) => ({
+          name: s.name || '—',
+          value: s.count
+        }))
+      }
+    ]
+  }
+})
+
+/**
+ * Dual donut Browsers + Systems (mobile)
+ */
+const platformDonutOption = computed(() => {
+  const browsers = browserStats.value.slice(0, 5)
+  const systems = systemStats.value.slice(0, 4)
+
+  if (!browsers.length && !systems.length) {
+    return {}
+  }
+
+  return {
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      orient: 'horizontal',
+      bottom: 0,
+      textStyle: {
+        fontSize: 10
+      }
+    },
+    series: [
+      {
+        name: t('analytics.browsers_title') || 'Navegadors',
+        type: 'pie',
+        radius: ['25%', '45%'], // donut interior
+        center: ['50%', '45%'],
+        avoidLabelOverlap: true,
+        label: {
+          show: false
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 11,
+            fontWeight: 'bold'
+          }
+        },
+        data: browsers.map((b) => ({
+          name: b.name || '—',
+          value: b.count
+        }))
+      },
+      {
+        name: t('analytics.systems_title') || 'Plataformes',
+        type: 'pie',
+        radius: ['55%', '75%'], // donut exterior
+        center: ['50%', '45%'],
+        avoidLabelOverlap: true,
+        label: {
+          show: false
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 11,
+            fontWeight: 'bold'
+          }
+        },
+        data: systems.map((s) => ({
+          name: s.name || '—',
+          value: s.count
+        }))
+      }
+    ]
+  }
+})
 </script>
 
 <template>
@@ -157,16 +311,12 @@ const perPageChartOption = computed(() => {
             {{ t('analytics.subtitle') || 'Visites segons GoatCounter' }}
           </p>
         </div>
-        <div class="analytics-mode">
-          <span class="mode-pill">
-            {{ t('analytics.mode') || 'Dades reals via GoatCounter (últims dies)' }}
-          </span>
-        </div>
       </header>
-        <p v-if="error && error.message " class="analytics-error-detail">
-          {{ error.message }}
-          
-        </p>
+
+      <p v-if="error && error.message" class="analytics-error-detail">
+        {{ error.message }}
+      </p>
+
       <!-- ESTAT DE CÀRREGA / ERROR -->
       <div v-if="isLoading" class="analytics-state">
         <p>{{ t('analytics.loading') || 'Carregant analítiques…' }}</p>
@@ -176,11 +326,6 @@ const perPageChartOption = computed(() => {
         <p>
           {{ t('analytics.error') || 'Error carregant dades d’analítiques.' }}
         </p>
-        <!-- <p v-if="error?.statusMessage" class="analytics-error-detail">
-          {{ error.statusMessage }}
-          
-        </p> -->
-
       </div>
 
       <template v-else>
@@ -226,8 +371,9 @@ const perPageChartOption = computed(() => {
           </div>
         </div>
 
-        <!-- GRÀFICS -->
+        <!-- GRÀFICS PRINCIPALS -->
         <div class="analytics-charts">
+          <!-- Daily line -->
           <div class="chart-card">
             <ClientOnly>
               <VChart
@@ -244,6 +390,7 @@ const perPageChartOption = computed(() => {
             </ClientOnly>
           </div>
 
+          <!-- Per-page bars -->
           <div class="chart-card">
             <ClientOnly>
               <VChart
@@ -259,10 +406,70 @@ const perPageChartOption = computed(() => {
               </template>
             </ClientOnly>
           </div>
+
+          <!-- MOBILE ONLY: dual donut (browsers + systems) -->
+          <div
+            class="chart-card chart-card--mobile-only"
+            v-if="browserStats.length || systemStats.length"
+          >
+            <ClientOnly>
+              <VChart
+                class="chart chart--platforms"
+                :option="platformDonutOption"
+                autoresize
+              />
+              <template #fallback>
+                <div class="chart-fallback">
+                  {{ t('analytics.chart_loading') || 'Carregant gràfic…' }}
+                </div>
+              </template>
+            </ClientOnly>
+          </div>
+
+          <!-- DESKTOP ONLY: donut Navegadors -->
+          <div
+            class="chart-card chart-card--desktop-only"
+            v-if="browserStats.length"
+          >
+            <ClientOnly>
+              <VChart
+                class="chart"
+                :option="browsersDonutOption"
+                autoresize
+              />
+              <template #fallback>
+                <div class="chart-fallback">
+                  {{ t('analytics.chart_loading') || 'Carregant gràfic…' }}
+                </div>
+              </template>
+            </ClientOnly>
+          </div>
+
+          <!-- DESKTOP ONLY: donut Plataformes -->
+          <div
+            class="chart-card chart-card--desktop-only"
+            v-if="systemStats.length"
+          >
+            <ClientOnly>
+              <VChart
+                class="chart"
+                :option="systemsDonutOption"
+                autoresize
+              />
+              <template #fallback>
+                <div class="chart-fallback">
+                  {{ t('analytics.chart_loading') || 'Carregant gràfic…' }}
+                </div>
+              </template>
+            </ClientOnly>
+          </div>
         </div>
 
-        <!-- DESGLOSSAMENT PER NAVEGADOR / SISTEMA -->
-        <div class="analytics-platforms" v-if="browserStats.length || systemStats.length">
+        <!-- DESGLOSSAMENT PER NAVEGADOR / SISTEMA (llistes de suport) -->
+        <div
+          class="analytics-platforms"
+          v-if="browserStats.length || systemStats.length"
+        >
           <div class="platform-card" v-if="browserStats.length">
             <h2 class="platform-title">
               {{ t('analytics.browsers_title') || 'Navegadors principals' }}
@@ -314,16 +521,25 @@ const perPageChartOption = computed(() => {
   background: radial-gradient(circle at top left, #fdf6ea 0, #f9f4ec 40%, #f7f0e4 100%);
   padding: 2.2rem 1.25rem 3rem;
   color: var(--text-main);
+  display: flex;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .analytics-inner {
-  max-width: 1120px;
+  width: 100%;
+  max-width: 960px;
   margin: 0 auto;
 }
 
 .analytics-header {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
 }
@@ -338,23 +554,6 @@ const perPageChartOption = computed(() => {
 .analytics-subtitle {
   margin: 0;
   font-size: 0.95rem;
-  color: var(--text-muted);
-}
-
-.analytics-mode {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.mode-pill {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  padding: 0.25rem 0.75rem;
-  background: #f2e7d8;
-  border: 1px solid rgba(0, 0, 0, 0.03);
-  font-size: 0.78rem;
   color: var(--text-muted);
 }
 
@@ -414,7 +613,7 @@ const perPageChartOption = computed(() => {
 /* CHARTS */
 .analytics-charts {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr); /* mòbil: una columna */
   gap: 1.2rem;
 }
 
@@ -426,9 +625,23 @@ const perPageChartOption = computed(() => {
   border: 1px solid rgba(0, 0, 0, 0.03);
 }
 
+/* visibilitat responsive */
+.chart-card--mobile-only {
+  display: block;
+}
+
+.chart-card--desktop-only {
+  display: none;
+}
+
 .chart {
   width: 100%;
   height: 280px;
+}
+
+/* donut dual per navegadors + plataformes (mòbil) */
+.chart.chart--platforms {
+  height: 260px;
 }
 
 .chart-fallback {
@@ -493,10 +706,19 @@ const perPageChartOption = computed(() => {
 
 /* RESPONSIVE */
 @media (min-width: 720px) {
+  .analytics-page {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .analytics-inner {
+    max-width: 960px;
+  }
+
   .analytics-header {
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
+    gap: 1.5rem;
   }
 
   .analytics-summary {
@@ -504,15 +726,24 @@ const perPageChartOption = computed(() => {
   }
 
   .analytics-charts {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .analytics-platforms {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* desktop: 2 columnes */
   }
 
   .chart {
     height: 320px;
+  }
+
+  /* desktop: només es veuen els donuts separats */
+  .chart-card--mobile-only {
+    display: none;
+  }
+
+  .chart-card--desktop-only {
+    display: block;
+  }
+
+  .analytics-platforms {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 </style>

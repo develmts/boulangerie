@@ -13,6 +13,7 @@ export type StoredLocalizedBlock = {
   body: string
 }
 
+
 /**
  * Tipus unificat per a qualsevol CMS (Contentful, Nuxt Content, Sanity).
  * Sempre hem d'entregar aquest format cap al frontend.
@@ -20,30 +21,12 @@ export type StoredLocalizedBlock = {
 export type ContentBlock = {
   slug: string
   title: string
-
-  /**
-   * HTML del cos quan ve de CMS que retornen HTML (Contentful, Sanity convertit)
-   */
   body: string
-
-  /**
-   * Tipus de contingut ric:
-   * - 'html'      → fem servir body/html
-   * - 'nuxt-doc'  → fem servir nuxtContentDoc
-   * - 'sanity-pt' → fem servir sanityPortableText
-   */
-  // kind?: RichContentKind
-
-  // HTML explícit
-  // html?: string
 
   // Nuxt Content AST/document
   nuxtContentDoc?: any
 
-  // Sanity Portable Text raw blocks
-  // sanityPortableText?: any
-
-  // Qualsevol extra futur
+  // Futurs formats Sanity / HTML / etc.
   // [key: string]: any
 }
 
@@ -60,7 +43,59 @@ export type CmsPage = {
   locale: Locale
   title: string
   body: string
-
-  // Igual que CmsBlock, però a nivell de pàgina
   nuxtContentDoc?: any
 }
+
+
+/* -------------------------------------------------------------------------- */
+/*                               NOUS TIPUS CMS                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Identificador genèric de col·lecció. Oberta: blog, news, faq, legal...
+ */
+export type CmsCollectionKey = string
+
+/**
+ * Direcció d’ordenació
+ */
+export type CmsListSortDirection = 'asc' | 'desc'
+
+/**
+ * Definició d’ordenació d’una llista CMS
+ */
+export type CmsListSort = {
+  field: string
+  direction: CmsListSortDirection
+}
+
+/**
+ * Query unificada (UN SOL PARÀMETRE) per a llistes CMS.
+ */
+export type CmsListQuery = {
+  collection: CmsCollectionKey
+  locale: Locale
+  sort?: CmsListSort | null
+  limit?: number | null
+  offset?: number | null
+  filters?: Record<string, unknown> | null
+}
+
+/**
+ * Forma normalitzada que el frontend rebrà per cada element de llista.
+ */
+export type CmsListItem<TDoc = unknown> = {
+  id: string
+  slug: string
+  title?: string
+  excerpt?: string
+  date?: string | Date
+  path?: string
+  doc?: TDoc              // Document cru del backend (Nuxt Content, Sanity, etc.)
+}
+
+/**
+ * Tipus de backend CMS disponible.
+ * Aconsellable tenir-lo present en molts llocs.
+ */
+export type CmsSource = 'contentful' | 'sanity' | 'content'

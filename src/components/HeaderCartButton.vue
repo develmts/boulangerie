@@ -1,11 +1,11 @@
 <!-- components/HeaderCartButton.vue -->
 <script setup lang="ts">
 
-import { ComputedRefSymbol } from '@vue/reactivity'
-import { ShoppingCart} from 'lucide-vue-next'
+// import { ComputedRefSymbol } from '@vue/reactivity'
 import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-const localePath = useLocalePath()
+import { ShoppingCart} from 'lucide-vue-next'
+import { useI18n} from 'vue-i18n'
+// const localePath = useLocalePath()
 
 import { useCart } from '~/composables/useCart'
 
@@ -48,7 +48,7 @@ const showBadge = computed(() => {
 </script>
 
 <template>
-  <button type="button" class="icon-button" aria-label="Cart" @click="toggleCart()">
+  <button type="button" class="icon-button" aria-label="Cart" @click="toggleCart()" data-testid="open-cart">
     <div class="icon-badge-wrapper">
       <ShoppingCart class="icon" />
       <CartBadge

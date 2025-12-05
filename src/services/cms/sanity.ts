@@ -5,6 +5,8 @@ import {
   type ClientConfig,
 } from '@sanity/client'
 
+import type { CmsListQuery, CmsListItem } from './types'
+
 /**
  * Config bàsica de Sanity.
  * IMPORTANT:
@@ -192,6 +194,25 @@ export async function sanityDelete(id: string): Promise<unknown> {
     throw error
   }
 }
+
+/**
+ * Stub de l’API de llistes CMS per al backend Sanity.
+ *
+ * De moment:
+ *  - només fa log
+ *  - retorna una llista buida
+ *
+ * Futur:
+ *  - implementar via sanityFetch() amb una query GROQ
+ */
+export async function sanityListEntries(
+  params: CmsListQuery
+): Promise<CmsListItem[]> {
+  console.warn('[cms/sanity] sanityListEntries() not implemented yet', params)
+  return []
+}
+
+
 
 // Re-export de tipus, per si els vols fer servir
 export type { SanityClient, ClientConfig }

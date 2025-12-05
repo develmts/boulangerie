@@ -6,6 +6,8 @@ import path from 'path';
 const isDev = true
 
 export default defineNuxtConfig({
+  compatibilityDate: '2025-12-02',
+  srcDir: 'src/',
   app: {
     head: {
       link: [
@@ -40,28 +42,35 @@ export default defineNuxtConfig({
           "@/assets/css/theme.french-minimal.css",
           "@/assets/css/theme.artisanal-warm.css",
           "@/assets/css/theme.pa-i-dolcos.css",
+          "@/assets/css/theme.midnight-bakery.css",
+          "@/assets/css/theme.nordic-clean.css",
+          "@/assets/css/theme.retro-pastel.css"          
         ]
       : []), 
     "@/assets/css/main.css",
   ],
   experimental: {
     payloadExtraction: false,
+    appManifest: false
+  },
+  future: {
+    compatibilityVersion: 4,
   },
   i18n: {
+      // langDir: 'src/i18n/locales',
+      langDir: 'locales', 
       defaultLocale: 'ca',
       locales: [
           { code: 'ca', file: 'ca.json' },
           { code: 'es', file: 'es.json' },
           { code: 'en', file: 'en.json' },
       ],
-      langDir: 'locales',
       strategy: 'prefix_except_default',
       detectBrowserLanguage: false,
   },
   
   nitro: {
-    preset: 'node-server' ,
-    compatibilityDate: '2025-11-18',
+    preset: 'node-server' 
   },
 
   modules: [
@@ -70,7 +79,6 @@ export default defineNuxtConfig({
   ], 
 
   runtimeConfig: {
-    
     goatcounterBaseUrl: process.env.GOATCOUNTER_BASE_URL,
     goatcounterApiKey: process.env.GOATCOUNTER_API_KEY,
     public: {
@@ -91,11 +99,11 @@ export default defineNuxtConfig({
       optionMode: process.env.OPTIOINS_MODE || 'demo'
     },
   },  
-  srcDir: 'src/',
+
   typescript: {
     strict: true 
   },
-  // Configuración Vite para HMR en desarrollo local
+
   vite: {
     define: {
       'process.env.API_KEY': JSON.stringify(process.env.GEMINI_API_KEY),

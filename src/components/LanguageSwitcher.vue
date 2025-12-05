@@ -17,7 +17,7 @@ const switchLocalePath = (code: any) => {
         ? (code.code as string)
         : String(code)
 
-  const raw = rawSwitchLocalePath(targetCode)
+  const raw = rawSwitchLocalePath(targetCode as "ca" | "es" | "en")
 
   // Al blog, evitem el hash per no causar hydration mismatch
   if (route.path === '/blog' || route.path.startsWith('/blog/')) {
@@ -92,6 +92,7 @@ onBeforeUnmount(() => {
         :key="loc.code"
         :to="switchLocalePath(loc.code)"
         :class="['lang-link', { 'lang-link--active': isActive(loc.code) }]"
+        data-testid="`lang-${loc-code}`"
       >
         {{ loc.code.toUpperCase() }}
       </NuxtLink>
@@ -103,6 +104,7 @@ onBeforeUnmount(() => {
         :to="switchLocalePath(locale)"
         :class="['lang-link', { 'lang-link--active': isActive(locale) }]"
         @click="toggle"
+        data-testid="`lang-${loc-code}`"
       >
         {{ locale.toUpperCase() }}
       </NuxtLink>

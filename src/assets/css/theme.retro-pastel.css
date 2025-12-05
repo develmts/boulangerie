@@ -1,0 +1,50 @@
+/* assets/css/theme.retro-pastel.css */
+/* Tema juganer – Retro Pastel (campanyes, estètica més desenfadada) */
+
+:root[data-theme="retro-pastel"] {
+  /* Base cromàtica */
+  --color-primary: #FF7A8A;
+  --color-primary-dark: #E15A6D;
+  --color-background: #FFF7F4;
+  --color-surface: #FFFFFF;
+  --color-text-main: #3C2F3A;
+  --color-text-muted: #8B6F80;
+  --color-border: #F1D5DD;
+
+  /* Tokens de fons */
+  --color-bg: #FFF7F4;
+  --color-bg-secondary: #FFEBD6;
+  --color-surface: #FFFFFF;
+  --color-bg-soft: var(--color-bg-secondary);
+
+  /* Jerarquia de text */
+  --color-text-strong: #2B1E26;
+  --color-text: #3C2F3A;
+  --color-text-muted: #8B6F80;
+  --color-text-brand: #FF7A8A;
+
+  /* Accents */
+  --color-accent: #FF7A8A;
+  --color-accent-soft: #FFD3DD;
+
+  /* Botons */
+  --color-button: #3C2F3A;
+  --color-button-hover: #FF7A8A;
+
+  /* Tipografia */
+  --font-heading: "Baloo 2", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", cursive;
+  --font-body: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-button: 700 0.95rem/1.2 "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Compatibilitat amb noms antics */
+  --font-headings: var(--font-heading);
+  --font-default: var(--font-body);
+
+  /* Radius + ombres */
+  --radius-s: 6px;
+  --radius-m: 14px;
+  --radius-l: 24px;
+
+  --shadow-soft: 0 3px 10px rgba(0, 0, 0, 0.06);
+  --shadow-strong: 0 14px 34px rgba(0, 0, 0, 0.14);
+}

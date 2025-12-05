@@ -9,6 +9,9 @@ const themes = [
   { id: "artisanal-warm", label: "Artisanal Warm" },
   { id: "french-minimal", label: "French Minimal" },
   { id: "pa-i-dolcos", label: "Pa i Dolços" },
+  { id: "midnight-bakery", label: "Midnight Bakery" },
+  { id: "nordic-clean", label: "Nordic Clean" },
+  { id: "retro-pastel", label: "Retro pastel" },
 ];
 
 const current = ref<string>("base");

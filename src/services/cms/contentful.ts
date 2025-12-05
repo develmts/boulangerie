@@ -1,6 +1,7 @@
 // services/contentful.ts
 import type { Locale } from '~/services/shopify'
 import type { ContentBlock, StoredLocalizedBlock, CmsBlock, CmsPage } from './types'
+import type {CmsListQuery, CmsListItem} from "./types"
 
 /**
  * Bloc bàsic de contingut CMS.
@@ -996,4 +997,20 @@ export async function getContentBySlug(
   //   `⚠️ CONTENTFUL MOCK: cap contingut trobat per slug="${slug}", locale="${locale}".`,
   // )
   return null
+}
+/**
+ * Stub de l’API de llistes CMS per al backend Contentful.
+ *
+ * De moment:
+ *  - només fa log
+ *  - retorna una llista buida
+ *
+ * Futur:
+ *  - reemplaçar per una query real a Contentful (REST/GraphQL)
+ */
+export async function contentfulListEntries(
+  params: CmsListQuery
+): Promise<CmsListItem[]> {
+  console.warn('[cms/contentful] contentfulListEntries() not implemented yet', params)
+  return []
 }

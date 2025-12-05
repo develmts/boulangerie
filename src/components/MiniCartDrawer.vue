@@ -63,6 +63,7 @@ function goToCheckout() {
               v-for="line in enrichedLines"
               :key="line.id"
               class="mini-cart__item"
+              data-testid="cart-line"
             >
               <div class="mini-cart__info">
                 <div class="mini-cart__name">
@@ -106,6 +107,7 @@ function goToCheckout() {
             type="button"
             class="mini-cart__checkout"
             @click="goToCheckout"
+            data-testid="checkout"
           >
             {{ t('cart.checkout') }}
           </button>

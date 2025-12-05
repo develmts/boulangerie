@@ -68,7 +68,7 @@ export function buildContactEmailHtml(payload: ContactEmailPayload): string {
 
 
 export function loadEmailTemplate(filename: string): string {
-  const templatePath = join(process.cwd(), 'src/server/templates', filename)
+  const templatePath = join(process.cwd(), 'server/templates', filename)
   return readFileSync(templatePath, 'utf8')
 }
 

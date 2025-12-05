@@ -15,10 +15,10 @@
 export * from './types'
 export * from './blocks'
 export * from './pages'
-
+export * from './cmsQueries'
 // Client de Sanity (ara en mode "futur", opcional per al frontend)
 export * from './sanity'
-
-// Més endavant, quan creem aquests fitxers, podrem afegir:
+// Old local, by hand, json-like client
 export * from './contentful'
+// current local content client
 export * from './content'

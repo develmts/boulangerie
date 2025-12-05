@@ -170,7 +170,7 @@ header {
   color: var(--color-primary);
 }
 
-.switcher-inline {}
+/* .switcher-inline {} */
 
 @media (max-width: 768px) {
   header {

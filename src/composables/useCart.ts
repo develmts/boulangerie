@@ -7,9 +7,9 @@ import {
   getCart as apiGetCart,
   updateCartLineQuantity,
   removeCartLine,
-  type Cart,
-  Locale,
 } from '~/services/shopify'
+
+import type { Locale, Cart} from '~/services/shopify'
 
 const products = ref<any[]>([]);
 const productsLoaded=ref(false)

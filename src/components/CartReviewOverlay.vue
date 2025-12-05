@@ -32,6 +32,7 @@ function handleConfirm() {
         class="cart-review-backdrop"
         role="presentation"
         @click.self="handleClose"
+        data-testid="cart-review-overlay"
       >
         <section
           class="cart-review-card"

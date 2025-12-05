@@ -1,1 +1,3 @@
-<template>Under construction</template>
+<template>
+    <main>Under Construction</main>
+</template>

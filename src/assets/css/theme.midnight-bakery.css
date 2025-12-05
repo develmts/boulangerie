@@ -1,0 +1,50 @@
+/* assets/css/theme.midnight-bakery.css */
+/* Tema DARK – Midnight Bakery (foscos càlids, llegibles) */
+
+:root[data-theme="midnight-bakery"] {
+  /* Base cromàtica */
+  --color-primary: #F4C06B;
+  --color-primary-dark: #E39A2F;
+  --color-background: #141218;
+  --color-surface: #1E1A22;
+  --color-text-main: #F5F1E8;
+  --color-text-muted: #A79F95;
+  --color-border: #332A3A;
+
+  /* Tokens de fons */
+  --color-bg: #141218;
+  --color-bg-secondary: #1B161F;
+  --color-surface: #1E1A22;
+  --color-bg-soft: var(--color-bg-secondary);
+
+  /* Jerarquia de text */
+  --color-text-strong: #FFF8EC;
+  --color-text: #F5F1E8;
+  --color-text-muted: #A79F95;
+  --color-text-brand: #F4C06B;
+
+  /* Accents */
+  --color-accent: #F4C06B;
+  --color-accent-soft: #3A2A18;
+
+  /* Botons */
+  --color-button: #F4C06B;
+  --color-button-hover: #E39A2F;
+
+  /* Tipografia */
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-button: 600 0.95rem/1.2 "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Compatibilitat amb noms antics */
+  --font-headings: var(--font-heading);
+  --font-default: var(--font-body);
+
+  /* Radius + ombres */
+  --radius-s: 4px;
+  --radius-m: 10px;
+  --radius-l: 20px;
+
+  --shadow-soft: 0 2px 14px rgba(0, 0, 0, 0.55);
+  --shadow-strong: 0 18px 40px rgba(0, 0, 0, 0.75);
+}

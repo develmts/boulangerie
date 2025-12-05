@@ -132,7 +132,7 @@ const displayPrice = computed(() => {
           @click="handleImageClick"
         />
         <div class="mini-info">
-          <h4 class="mini-title">
+          <h4 data-testid="product-title" class="mini-title">
             {{ product.title }}
           </h4>
           <p class="mini-price">
@@ -176,7 +176,7 @@ const displayPrice = computed(() => {
           />
         </div>
         <div class="horizontal-main">
-          <h3 class="horizontal-title">
+          <h3 data-testid="product-title" class="horizontal-title">
             {{ product.title }}
           </h3>
           <p class="horizontal-price">
@@ -188,6 +188,7 @@ const displayPrice = computed(() => {
             class="product-button horizontal-button product-card__add-to-cart"
             @click="handleAddToCart" 
             :disabled="isAdding"
+            data-testid="add-to-cart"
           >
             <span v-if="!product.availableForSale">
               {{ t('product.unavailable') }}
@@ -238,7 +239,7 @@ const displayPrice = computed(() => {
         </div>
 
         <div class="detail-main">
-          <h2 class="detail-title">
+          <h2 data-testid="product-title" class="detail-title">
             {{ product.title }}
           </h2>
 
@@ -271,7 +272,7 @@ const displayPrice = computed(() => {
 
       <!-- INFO -->
       <div class="product-info">
-        <h3 class="product-title">
+        <h3 data-testid="product-title" class="product-title">
           {{ product.title }}
         </h3>
 
@@ -285,6 +286,7 @@ const displayPrice = computed(() => {
           class="product-button"
           @click="handleAddToCart" 
           :disabled="isAdding"
+          data-testid="add-to-cart"
         >
           <span v-if="!product.availableForSale">
             {{ t('product.unavailable') }}

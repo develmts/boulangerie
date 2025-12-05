@@ -6,32 +6,41 @@
   "scripts": {
     "start": "serve -s dist -l 4090",
     "build": "nuxt build",
+    "clean": "rimraf .nuxt node_modules/.vite",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "version:patch": "npm version patch",
     "version:minor": "npm version minor",
     "version:major": "npm version major",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "test:e2e": "vitest test/e2e",
+    "test:unit": "vitest test/unit"
   },
   "dependencies": {
     "@intlify/vue-i18n-bridge": "^1.1.0",
     "@intlify/vue-router-bridge": "^1.1.0",
-    "@nuxtjs/i18n": "8.0.0",
+    "@nuxtjs/i18n": "^10.2.1",
     "@sanity/client": "^7.13.0",
     "better-sqlite3": "^12.4.5",
     "echarts": "^6.0.0",
     "lucide-vue-next": "^0.554.0",
+    "rimraf": "^6.1.2",
     "serve": "^14.2.5",
     "vue": "^3.3.12",
     "vue-echarts": "^8.0.1"
   },
   "devDependencies": {
-    "@nuxt/content": "^2.8.5",
+    "@nuxt/content": "^3.8.2",
     "@nuxt/devtools": "^3.1.0",
+    "@nuxt/test-utils": "^3.20.1",
     "@nuxt/typescript-build": "^3.0.0",
     "@types/node": "^20.10.3",
-    "nuxt": "3.7.4",
-    "typescript": "^5.3.2"
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^20.0.11",
+    "nuxt": "^4.0.0",
+    "playwright-core": "^1.57.0",
+    "typescript": "^5.3.2",
+    "vitest": "^3.2.4"
   }
 }

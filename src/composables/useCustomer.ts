@@ -70,12 +70,6 @@ const Customers: Array<{
   }
 ]
 
-const config = useRuntimeConfig()
-const _serverMode = config.public.serverMode   
-const isServer = (_serverMode === 'server')
-const isServerless = !isServer
-// console.log('[useCustomer] serverMode =', _serverMode)
-
 // Payloads per futurs endpoints (Shopify / API pròpia)
 export type UpdateProfilePayload = {
   firstName?: string | null
@@ -93,6 +87,11 @@ type ChangePasswordResponse =
 
 export function useCustomer() {
   // Shared state across the app
+  const config = useRuntimeConfig()
+  const _serverMode = config.public.serverMode   
+  const isServer = (_serverMode === 'server')
+  const isServerless = !isServer
+  // console.log('[useCustomer] serverMode =', _serverMode)
   const customer = useState<CustomerState | null>(
     'customer',
     () => null,

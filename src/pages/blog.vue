@@ -1,36 +1,74 @@
 <script setup lang="ts">
+import { getCmsPage, listCmsEntries } from '~/services/cms'
+import type { CmsPage, CmsListItem } from '~/services/cms'
+import type { Locale } from '~/services/shopify'
+
 const { locale, t } = useI18n()
 
-// Estat global compartit per totes les llengües (ID curt del post, ex: "20250110-001")
-const globalOpenPostId = useState<string | null>('blogOpenPostId', () => null)
-
-// Carreguem les entrades del blog des de Nuxt Content
-const { data: posts, pending, error } = await useAsyncData(
-  `blog-${locale.value}`,
-  () =>
-    queryContent(`${locale.value}/blog`)
-      .where({ _type: 'markdown' }) // només markdown
-      .where({ _path: { $ne: `/${locale.value}/blog` } }) // excloem el blog.md vell
-      .sort({ date: -1 })
-      .find()
-)
-
-// Estat local de l'acordió: quina entrada està oberta (per _path complet)
-const openId = ref<string | null>(null)
-
-// Títol principal del blog
-const mainTitle = computed(() =>
-  t('blog.pageTitle', 'Blog')
-)
-
-// Obtenim l'ID "global" estable d'un post (últim segment del path, ex: "20250110-001")
-function getGlobalId(post: any): string {
-  const path = (post._path as string) || ''
-  const segments = path.split('/')
-  return segments[segments.length - 1] || path
+// Tipus curt per als items de blog retornats per listCmsEntries
+type BlogItem = CmsListItem & {
+  readingTime?: number
 }
 
-// Quan canvien els posts (p. ex. per canvi d'idioma), intentem reobrir el que hi havia a l'estat global
+// ✅ Carreguem la pàgina CMS "blog" igual que l'about (títol, intro, etc.)
+const { data: cmsPage } = await useAsyncData<CmsPage | null>(
+  () => `cms-page-blog-${locale.value}`,
+  () => getCmsPage('blog', locale.value as Locale)
+)
+
+// Estat global compartit per totes les llengües (ID curt del post, ex: "20250110-001")
+const globalOpenPostId = useState<string | null>(
+  'blogOpenPostId',
+  () => null
+)
+
+// ✅ Carreguem les entrades del blog a través de l’API CMS unificada
+const { data: posts, pending, error } = await useAsyncData<BlogItem[]>(
+  () => `blog-${locale.value}`,
+  () =>
+    listCmsEntries({
+      collection: 'blog',
+      locale: locale.value as Locale,
+      sort: { field: 'date', direction: 'desc' },
+      limit: null,
+      offset: null,
+      filters: null
+    })
+)
+
+// Estat local de l'acordió: quina entrada està oberta (per `id` de l’item)
+const openId = ref<string | null>(null)
+
+// Títol principal del blog: primer el title del CMS, si no hi és, fallback de i18n
+const mainTitle = computed(() =>
+  cmsPage.value?.title ?? t('blog.pageTitle', 'Blog')
+)
+
+// Helper per formatar dates de forma robusta
+function formatPostDate(date: BlogItem['date'], localeCode: string): string {
+  if (!date) return ''
+
+  const d = typeof date === 'string' ? new Date(date) : date
+  if (!(d instanceof Date) || Number.isNaN(d.getTime())) {
+    return ''
+  }
+
+  return d.toLocaleDateString(localeCode)
+}
+
+// ID "global" estable d'un post (últim segment del path, ex: "20250110-001")
+function getGlobalId(post: BlogItem): string | null {
+  const path = post.path || ''
+  const segments = path.split('/').filter(Boolean)
+
+  if (segments.length > 0) {
+    return segments[segments.length - 1] || null
+  }
+
+  return post.slug || path || post.id
+}
+
+// Quan canvien els posts (p. ex. canvi d'idioma), intentem reobrir el que hi havia obert
 watch(
   () => posts.value,
   (list) => {
@@ -46,22 +84,26 @@ watch(
     }
 
     const match = list.find(post => getGlobalId(post) === currentGlobalId)
-    openId.value = match ? (match._path as string) : null
+    openId.value = match ? match.id : null
   },
   { immediate: true }
 )
 
-// Toggle de l'entrada (acordió + actualització d'estat global)
-function toggleEntry(post: any) {
-  const fullId = post._path as string
+// Toggle de l'entrada (acordió + estat global)
+function toggleEntry(post: BlogItem) {
+  const fullId = post.id
   const globalId = getGlobalId(post)
 
+  if (!fullId) {
+    return
+  }
+
   if (openId.value === fullId) {
-    // Si cliquem la que ja està oberta, la tanquem i netegem estat global
+    // Tanquem i netegem estat global
     openId.value = null
     globalOpenPostId.value = null
   } else {
-    // Si cliquem una altra, tanquem l’anterior i obrim aquesta, guardant l'ID global
+    // Obrim aquesta i guardem l'ID global per reobrir-la en altres locales
     openId.value = fullId
     globalOpenPostId.value = globalId
   }
@@ -97,7 +139,7 @@ function toggleEntry(post: any) {
           <div v-if="posts?.length" class="blog-accordion">
             <article
               v-for="post in posts"
-              :key="post._path"
+              :key="post.id"
               class="blog-entry"
             >
               <button
@@ -114,7 +156,7 @@ function toggleEntry(post: any) {
                   </p>
                   <p class="blog-entry-meta">
                     <span v-if="post.date">
-                      {{ new Date(post.date).toLocaleDateString(locale) }}
+                      {{ formatPostDate(post.date, locale) }}
                     </span>
                     <span v-if="post.readingTime">
                       · {{ post.readingTime }} {{ t('blog.readingMinutes', 'min') }}
@@ -124,7 +166,7 @@ function toggleEntry(post: any) {
 
                 <span
                   class="blog-entry-indicator"
-                  :class="{ 'is-open': openId === post._path }"
+                  :class="{ 'is-open': openId === post.id }"
                   aria-hidden="true"
                 >
                   ▼
@@ -133,10 +175,10 @@ function toggleEntry(post: any) {
 
               <transition name="blog-entry-collapse">
                 <div
-                  v-if="openId === post._path"
+                  v-if="openId === post.id"
                   class="blog-entry-body"
                 >
-                  <ContentRenderer :value="post" />
+                  <ContentRenderer :value="post.doc ?? post" />
                 </div>
               </transition>
             </article>
@@ -171,7 +213,7 @@ function toggleEntry(post: any) {
 
 .blog-title {
   font-size: 2rem;
-  font-family: var(--font-headings);
+  font-family: var(--font-heading);
   color: var(--color-primary);
   margin-bottom: 1.2rem;
 }
@@ -181,6 +223,8 @@ function toggleEntry(post: any) {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  /* ens assegurem que els elements ocupen tota l'amplada disponible per defecte */
+  align-items: stretch;
 }
 
 .blog-entry {
@@ -188,6 +232,22 @@ function toggleEntry(post: any) {
   background: var(--color-surface, #fff);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   overflow: hidden;
+
+  /* 🔹 Amplada controlada per viewport */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 🔹 Desktop: amplada fixa dels "cards" i centrats */
+@media (min-width: 1024px) {
+  .blog-accordion {
+    align-items: center; /* centra els cards dins del contenidor */
+  }
+
+  .blog-entry {
+    width: 810px; /* ajusta aquest valor si vols més o menys ample */
+    max-width: 810px;
+  }
 }
 
 .blog-entry-header {
@@ -214,7 +274,7 @@ function toggleEntry(post: any) {
 .blog-entry-title {
   font-size: 1.2rem;
   margin: 0 0 0.25rem;
-  font-family: var(--font-headings);
+  font-family: var(--font-heading);
   color: var(--color-primary-strong, var(--color-primary));
 }
 

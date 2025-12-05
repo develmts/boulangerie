@@ -3,6 +3,7 @@
 import type { Locale } from '~/services/shopify'
 import type { CmsBlock,ContentBlock } from '~/services/cms'
 // import { MOCK_CONTENT, LEGAL_MOCK_CONTENT } from './contentful' 
+import { resolveCmsSource, logCmsSource, type CmsSource } from './cmsTools'
 import { getContentBySlug } from './contentful'
 import { contentGetBlock } from './content'
 import { sanityFetch } from './sanity'
@@ -14,18 +15,18 @@ import { sanityFetch } from './sanity'
 //   body: string
 // }
 
-type CmsSource = 'contentful' | 'sanity' | 'content'
 
-function resolveCmsSource(): CmsSource {
-  const env = process.env.NUXT_PUBLIC_CMS_SOURCE || 'content'
+// Moved a cmsTools
+// type CmsSource = 'contentful' | 'sanity' | 'content'
 
-  if (env === 'sanity' || env === 'content' || env === 'contentful') {
-    return env
-  }
-
-  // Valor per defecte si no hi ha res configurat o és incorrecte
-  return 'contentful'
-}
+// function resolveCmsSource(): CmsSource {
+//   const env = process.env.NUXT_PUBLIC_CMS_SOURCE || 'content'
+//   if (env === 'sanity' || env === 'content' || env === 'contentful') {
+//     return env
+//   }
+//   // Valor per defecte si no hi ha res configurat o és incorrecte
+//   return 'contentful'
+// }
 
 const CMS_SOURCE: CmsSource = resolveCmsSource()
 
@@ -36,36 +37,7 @@ async function getBlockFromContentful(
   slug: string,
   locale: Locale,
 ): Promise<CmsBlock | null> {
-  // // Simulem una mica de latència, com feies abans amb contentful.ts
-  // await new Promise(resolve => setTimeout(resolve, 50))
 
-  // const legalBySlug = LEGAL_MOCK_CONTENT[slug]
-  // if (legalBySlug) {
-  //   const localized: ContentBlock | undefined =
-  //     legalBySlug[locale] ?? legalBySlug['ca']
-
-  //   if (localized) {
-  //     return {
-  //       slug,
-  //       title: localized.title,
-  //       body: localized.body ?? '',
-  //     }
-  //   }
-  // }
-
-  // const generalBySlug = MOCK_CONTENT[slug]
-  // if (generalBySlug) {
-  //   const localized: ContentBlock | undefined =
-  //     generalBySlug[locale] ?? generalBySlug['ca']
-
-  //   if (localized) {
-  //     return {
-  //       slug,
-  //       title: localized.title,
-  //       body: localized.body ?? '',
-  //     }
-  //   }
-  // }
   return getContentBySlug(slug, locale)
   
   // console.warn(
@@ -106,7 +78,8 @@ async function getBlockFromSanity(
   // if (!data) return null
   // return { slug, title: data.title, body: data.bodyHtml }
 
-  return getBlockFromContentful(slug, locale)
+  //return getBlockFromContentful(slug, locale)
+  return null
 }
 
 /**
@@ -118,6 +91,7 @@ export async function getCmsBlock(
 ): Promise<CmsBlock | null> {
 
   const CMS_SOURCE= resolveCmsSource();
+  console.log(`[getCmsBlock] provider = ${CMS_SOURCE} slug = ${slug} locale = ${locale}`)
 
   switch (CMS_SOURCE) {
     case 'content':

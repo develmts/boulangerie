@@ -197,9 +197,9 @@
     "browsers_title": "Navegadors",
     "systems_title": "Plataforma",
     "daily_title":"Diari",
-    "daily_series": "Dades diaries",
+    "daily_series": "Hits/dia",
     "per_page_title":"Per pàgina",
-    "per_page_series": "Dades per pàgina"
+    "per_page_series": "Hits/pagina"
   },
 
   "cookies": {
@@ -242,5 +242,8 @@
     "analytics": "Analitiques",
     "orders": "Comandes",
     "products": "Gestio de productes"
+  },
+  "errors" : {
+    "contentNotFound":" No s'ha trobat contingut"
   }
 }
