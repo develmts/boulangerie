@@ -43,6 +43,17 @@
   - ErrorCard
   - Blog
 - [ ] Implementar el pack complet de tests E2E (IMPORTANT).
+  - Definir estratègia mínima de testing E2E
+    Inclou: framework (p. ex. Playwright), criteri de cobertura mínima i entorn d’execució (local / preview / CI).
+
+  - Definir checklist prèvia obligatòria abans d’implementar E2E
+    (pas 0): data-testid obligatoris als components clau i validació prèvia d’estabilitat de la UI.
+
+  - Definir quines parts de la UI queden congelades abans d’afegir tests E2E
+    Per evitar trencaments continus dels tests per canvis visuals o de copy.
+
+  - Definir fluxos crítics de negoci a cobrir amb E2E
+    (happy paths prioritaris, no cobertura exhaustiva).
 
 ---
 
